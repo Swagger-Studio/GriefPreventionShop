@@ -3,7 +3,7 @@
 # ==========================================================
 gui:
   size: 36
-  title: "&#FFC427&lCLAIM SHOP"
+  title: "&0Claim Shop"
   filler:
     material: BLACK_STAINED_GLASS_PANE
     display-name: " "
