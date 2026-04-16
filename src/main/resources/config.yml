@@ -1,14 +1,13 @@
 # ==========================================================
 # GRIEF PREVENTION SHOP - CONFIGURATION
 # ==========================================================
-# Support Discord: https://discord.gg/Yxq6H8cb
 # Official Website: https://swaggers.studio/
 # ==========================================================
 # For support or custom feature requests, join our Discord.
 
 # The prefix used in all plugin messages
 # Supports Legacy Codes (&), HEX (&#RRGGBB)
-prefix: "&#FFC427&lCLAIM SHOP &7➟"
+prefix: "&#FFC427&lCLAIM SHOP &e♯"
 
 # The currency symbol used for all money displays
 # Supports HEX and Legacy
