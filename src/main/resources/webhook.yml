@@ -1,0 +1,30 @@
+# ==========================================================
+# GRIEF PREVENTION SHOP - DISCORD WEBHOOK
+# ==========================================================
+# Aesthetic: Pro Embeds
+# ==========================================================
+
+enabled: false
+url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
+
+embed:
+  title: "📦 NEW SHOP PURCHASE"
+  color: "#FFC427"
+  # Thumbnail settings (Right side avatar)
+  thumbnail: true
+  
+  fields:
+    - name: "👤 Player"
+      value: "<player>"
+      inline: true
+    - name: "💎 Amount"
+      value: "<amount> blocks"
+      inline: true
+    - name: "💰 Total Price"
+      value: "<price>"
+      inline: true
+    - name: "🌍 Location"
+      value: "<world> (X: <x>, Y: <y>, Z: <z>)"
+      inline: false
+
+footer: "Logged by GriefPreventionShop"

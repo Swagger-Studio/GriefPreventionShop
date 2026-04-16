@@ -37,3 +37,26 @@ commands:
 logging:
   enabled: true
   path: "logs"
+
+# Sound settings
+sounds:
+  purchase:
+    enabled: true
+    sound: "ENTITY_PLAYER_LEVELUP"
+    volume: 1.0
+    pitch: 1.0
+  insufficient-funds:
+    enabled: true
+    sound: "ENTITY_VILLAGER_HURT"
+    volume: 1.0
+    pitch: 1.0
+
+# Individual History settings
+history:
+  # Allows players to see their own purchase history via command (GUI)
+  enabled: true
+  command: "claimhistory"
+  # Default timezone for history logs (e.g., Asia/Kolkata, UTC, etc.)
+  timezone: "Asia/Kolkata"
+  # Maximum entries to store in history per player
+  max-entries: 50

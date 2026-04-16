@@ -46,6 +46,18 @@ public class MainCommand extends BukkitCommand {
         }
 
         Player player = (Player) sender;
+        String historyCmd = plugin.getConfig().getString("history.command", "claimhistory");
+
+        // Check if root command is history OR if subcommand is history
+        if (commandLabel.equalsIgnoreCase(historyCmd) || (args.length > 0 && args[0].equalsIgnoreCase("history"))) {
+            if (!player.hasPermission("griefpreventionshop.history")) {
+                plugin.getMessageManager().sendMessage(player, "error.no-permission");
+                return true;
+            }
+            plugin.getHistoryManager().openHistoryGUI(player);
+            return true;
+        }
+
         if (!player.hasPermission("griefpreventionshop.use")) {
             plugin.getMessageManager().sendMessage(player, "error.no-permission");
             return true;

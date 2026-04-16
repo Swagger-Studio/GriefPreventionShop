@@ -104,6 +104,21 @@ public class MessageManager {
         return text;
     }
 
+    public void playSound(Player player, String soundPath) {
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("sounds." + soundPath);
+        if (section == null || !section.getBoolean("enabled", true)) return;
+
+        String soundName = section.getString("sound", "ENTITY_PLAYER_LEVELUP");
+        float volume = (float) section.getDouble("volume", 1.0);
+        float pitch = (float) section.getDouble("pitch", 1.0);
+
+        try {
+            player.playSound(player.getLocation(), org.bukkit.Sound.valueOf(soundName), volume, pitch);
+        } catch (IllegalArgumentException e) {
+            plugin.getLogger().warning("Invalid sound name in config: " + soundName);
+        }
+    }
+
     public Component parseColors(String text) {
         if (text == null || text.isEmpty()) return Component.empty();
 
@@ -118,28 +133,28 @@ public class MessageManager {
 
         // 2. Handle Legacy & -> MiniMessage tags
         // This ensures compatibility with both standard & codes and modern tags.
-        text = text.replace("&0", "<black>")
-                   .replace("&1", "<dark_blue>")
-                   .replace("&2", "<dark_green>")
-                   .replace("&3", "<dark_aqua>")
-                   .replace("&4", "<dark_red>")
-                   .replace("&5", "<dark_purple>")
-                   .replace("&6", "<gold>")
-                   .replace("&7", "<gray>")
-                   .replace("&8", "<dark_gray>")
-                   .replace("&9", "<blue>")
-                   .replace("&a", "<green>")
-                   .replace("&b", "<aqua>")
-                   .replace("&c", "<red>")
-                   .replace("&d", "<light_purple>")
-                   .replace("&e", "<yellow>")
-                   .replace("&f", "<white>")
+        text = text.replace("&0", "<reset><black>")
+                   .replace("&1", "<reset><dark_blue>")
+                   .replace("&2", "<reset><dark_green>")
+                   .replace("&3", "<reset><dark_blue>")
+                   .replace("&4", "<reset><dark_red>")
+                   .replace("&5", "<reset><dark_purple>")
+                   .replace("&6", "<reset><gold>")
+                   .replace("&7", "<reset><gray>")
+                   .replace("&8", "<reset><dark_gray>")
+                   .replace("&9", "<reset><blue>")
+                   .replace("&a", "<reset><green>")
+                   .replace("&b", "<reset><aqua>")
+                   .replace("&c", "<reset><red>")
+                   .replace("&d", "<reset><light_purple>")
+                   .replace("&e", "<reset><yellow>")
+                   .replace("&f", "<reset><white>")
                    .replace("&l", "<bold>")
                    .replace("&m", "<strikethrough>")
                    .replace("&n", "<underlined>")
                    .replace("&o", "<italic>")
                    .replace("&r", "<reset>");
 
-        return miniMessage.deserialize("<!italic>" + text);
+        return miniMessage.deserialize("<!italic>" + text).decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false);
     }
 }

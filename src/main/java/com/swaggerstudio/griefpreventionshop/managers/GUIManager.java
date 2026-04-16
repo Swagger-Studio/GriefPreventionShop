@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.File;
 import java.util.List;
@@ -38,10 +39,11 @@ public class GUIManager {
             plugin.saveResource("shop-menu.yml", false);
         }
         shopConfig = YamlConfiguration.loadConfiguration(file);
+        plugin.getHistoryManager().reload();
     }
 
     public void openShop(Player player) {
-        playerCart.putIfAbsent(player.getUniqueId(), 0);
+        playerCart.putIfAbsent(player.getUniqueId(), 1);
         updateInventory(player);
     }
 
@@ -64,8 +66,32 @@ public class GUIManager {
         loadSingleItem(inventory, "gui.navigation.cancel", currentAmount);
         // 6. Load Nav Confirm
         loadSingleItem(inventory, "gui.navigation.confirm", currentAmount);
+        // 7. Load Stats
+        loadStatsItem(inventory, player, currentAmount);
+        // 8. Global Filler
+        fillBackground(inventory);
 
         player.openInventory(inventory);
+    }
+
+    private void fillBackground(Inventory inv) {
+        ConfigurationSection fillerSec = shopConfig.getConfigurationSection("gui.filler");
+        if (fillerSec == null) return;
+
+        ItemStack filler = createItem(fillerSec, 0, null);
+        for (int i = 0; i < inv.getSize(); i++) {
+            if (inv.getItem(i) == null || inv.getItem(i).getType() == Material.AIR) {
+                inv.setItem(i, filler);
+            }
+        }
+    }
+
+    private void loadStatsItem(Inventory inv, Player player, int currentAmount) {
+        ConfigurationSection statsSec = shopConfig.getConfigurationSection("gui.stats");
+        if (statsSec == null) return;
+
+        int slot = statsSec.getInt("slot");
+        inv.setItem(slot, createItem(statsSec, currentAmount, player));
     }
 
     private void loadSection(Inventory inv, String path, int currentAmount) {
@@ -77,7 +103,7 @@ public class GUIManager {
             if (itemSec == null) continue;
             
             int slot = itemSec.getInt("slot");
-            inv.setItem(slot, createItem(itemSec, currentAmount));
+            inv.setItem(slot, createItem(itemSec, currentAmount, null));
         }
     }
 
@@ -86,37 +112,53 @@ public class GUIManager {
         if (section == null) return;
 
         int slot = section.getInt("slot");
-        inv.setItem(slot, createItem(section, currentAmount));
+        inv.setItem(slot, createItem(section, currentAmount, null));
     }
 
-    private ItemStack createItem(ConfigurationSection section, int currentAmount) {
+    private ItemStack createItem(ConfigurationSection section, int currentAmount, Player owner) {
         Material material = Material.valueOf(section.getString("material", "STONE").toUpperCase());
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
+            // Special handling for Player Head
+            if (material == Material.PLAYER_HEAD && owner != null && meta instanceof SkullMeta skullMeta) {
+                skullMeta.setOwningPlayer(owner);
+            }
+
             String name = section.getString("display-name", "");
-            meta.displayName(plugin.getMessageManager().parseColors(replacePlaceholders(name, currentAmount)));
+            meta.displayName(plugin.getMessageManager().parseColors(replacePlaceholders(name, currentAmount, owner)));
 
             List<String> lore = section.getStringList("lore");
             meta.lore(lore.stream()
-                    .map(line -> replacePlaceholders(line, currentAmount))
+                    .map(line -> replacePlaceholders(line, currentAmount, owner))
                     .map(line -> plugin.getMessageManager().parseColors(line))
                     .collect(Collectors.toList()));
             
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS);
             item.setItemMeta(meta);
         }
         return item;
     }
 
-    private String replacePlaceholders(String text, int amount) {
+    private String replacePlaceholders(String text, int amount, Player player) {
         double unitPrice = plugin.getConfigManager().getPricePerBlock();
         double total = Math.abs(amount) * unitPrice;
         String symbol = plugin.getConfigManager().getCurrencySymbol();
-        return text.replace("<amount>", String.valueOf(amount))
+        
+        String result = text.replace("<amount>", String.valueOf(amount))
                    .replace("<unit_price>", NumberUtil.formatCurrency(unitPrice, symbol))
                    .replace("<total>", NumberUtil.formatCurrency(total, symbol));
+
+        if (player != null) {
+            double balance = plugin.getEconomyManager().getBalance(player);
+            int blocks = plugin.getClaimManager().getClaimBlocks(player);
+            result = result.replace("<player>", player.getName())
+                           .replace("<money>", NumberUtil.formatCurrency(balance, symbol))
+                           .replace("<blocks>", String.valueOf(blocks));
+        }
+        
+        return result;
     }
 
     public void handleAction(Player player, int slot) {
@@ -194,6 +236,7 @@ public class GUIManager {
         String symbol = plugin.getConfigManager().getCurrencySymbol();
 
         if (!plugin.getEconomyManager().hasBalance(player, totalPrice)) {
+            plugin.getMessageManager().playSound(player, "insufficient-funds");
             plugin.getMessageManager().sendMessage(player, "error.not-enough-money", "<price>", NumberUtil.formatCurrency(totalPrice, symbol));
             return;
         }
@@ -201,6 +244,9 @@ public class GUIManager {
         if (plugin.getEconomyManager().withdraw(player, totalPrice)) {
             plugin.getClaimManager().addClaimBlocks(player, amount);
             plugin.getLogManager().logPurchase(player.getName(), amount, totalPrice, player.getWorld().getName());
+            plugin.getHistoryManager().addEntry(player, amount, totalPrice);
+            plugin.getWebhookManager().sendPurchaseNotification(player, amount, totalPrice);
+            plugin.getMessageManager().playSound(player, "purchase");
             plugin.getMessageManager().sendMessage(player, "shop.purchase-success", "<amount>", String.valueOf(amount), "<price>", NumberUtil.formatCurrency(totalPrice, symbol));
         } else {
             plugin.getMessageManager().sendMessage(player, "error.transaction-failed");

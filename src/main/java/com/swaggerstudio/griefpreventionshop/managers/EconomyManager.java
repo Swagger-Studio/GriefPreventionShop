@@ -45,4 +45,8 @@ public class EconomyManager {
     public String format(double amount) {
         return econ.format(amount);
     }
+
+    public double getBalance(OfflinePlayer player) {
+        return econ.getBalance(player);
+    }
 }

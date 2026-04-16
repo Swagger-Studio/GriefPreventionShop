@@ -1,0 +1,24 @@
+# ==========================================================
+# GRIEF PREVENTION SHOP - HISTORY MENU
+# ==========================================================
+# Aesthetic: Clean / Classic High-Contrast
+# ==========================================================
+
+gui:
+  title: "&#FFC427&lPURCHASE HISTORY"
+  size: 54
+
+  # The item template used for each transaction entry
+  item:
+    material: PAPER
+    display-name: "&6&l#<id> &8➟ &fTransaction"
+    lore:
+      - "&8<date>"
+      - ""
+      - "&7Type: &fPurchase"
+      - "&7Quantity: &e<amount> blocks"
+      - "&7Total Cost: &a<price>"
+      - ""
+      - "&7Location: &7<world>"
+      - ""
+      - "&6» &fProcessed Successfully"

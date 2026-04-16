@@ -4,10 +4,10 @@ import com.swaggerstudio.griefpreventionshop.GriefPreventionShop;
 import com.swaggerstudio.griefpreventionshop.commands.MainCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
-import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -48,27 +48,37 @@ public class ConfigManager {
     }
 
     public void registerCommands() {
-        String mainCommand = config.getString("commands.main", "claimshop");
-        List<String> aliases = config.getStringList("commands.aliases");
+        // Register Main Command
+        String mainCmdName = plugin.getConfig().getString("commands.main", "gpshop");
+        List<String> mainAliases = plugin.getConfig().getStringList("commands.aliases");
+        registerDynamicCommand(mainCmdName, mainAliases);
 
+        // Register History Command
+        if (plugin.getConfig().getBoolean("history.enabled", true)) {
+            String histCmdName = plugin.getConfig().getString("history.command", "claimhistory");
+            registerDynamicCommand(histCmdName, new ArrayList<>());
+        }
+    }
+
+    private void registerDynamicCommand(String name, List<String> aliases) {
         try {
             final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            // 1. Unregister old commands to allow "instant" change without restart
-            unregisterCommand(commandMap, mainCommand);
+            // 1. Unregister old command
+            unregisterCommand(commandMap, name);
             for (String alias : aliases) {
                 unregisterCommand(commandMap, alias);
             }
 
             // 2. Register newest version
-            MainCommand cmd = new MainCommand(plugin, mainCommand);
+            MainCommand cmd = new MainCommand(plugin, name);
             cmd.setAliases(aliases);
             commandMap.register(plugin.getName(), cmd);
             
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            plugin.getLogger().severe("Could not register commands dynamically: " + e.getMessage());
+            plugin.getLogger().severe("Could not register command " + name + " dynamically: " + e.getMessage());
         }
     }
 

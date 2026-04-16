@@ -17,6 +17,8 @@ public class GriefPreventionShop extends JavaPlugin {
     private ClaimManager claimManager;
     private GUIManager guiManager;
     private LogManager logManager;
+    private HistoryManager historyManager;
+    private WebhookManager webhookManager;
     private ChatInputListener chatInputListener;
 
     @Override
@@ -40,7 +42,10 @@ public class GriefPreventionShop extends JavaPlugin {
         // 4. Initialize Remaining Managers
         this.economyManager = new EconomyManager(this);
         this.claimManager = new ClaimManager(this);
-        this.guiManager = new GUIManager(this);
+        this.logManager = new LogManager(this);
+        this.historyManager = new HistoryManager(this);
+        this.webhookManager = new WebhookManager(this);
+        this.guiManager = new GUIManager(this); // GUIManager.reload() needs History/Webhook
         this.chatInputListener = new ChatInputListener(this);
 
         // 5. Register Commands & Listeners
@@ -139,10 +144,21 @@ public class GriefPreventionShop extends JavaPlugin {
         return logManager;
     }
 
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
+    public WebhookManager getWebhookManager() {
+        return webhookManager;
+    }
+
     public void reloadPlugin() {
         configManager.reload();
         messageManager.reload();
         guiManager.reload();
+        historyManager.reload();
+        webhookManager.reload();
+        
         // Re-register commands in case aliases changed
         registerCommands();
     }
