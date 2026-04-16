@@ -34,7 +34,7 @@ public class HistoryManager {
     public HistoryManager(GriefPreventionShop plugin) {
         this.plugin = plugin;
         this.historyFile = new File(plugin.getDataFolder(), "data/history.yml");
-        this.menuFile = new File(plugin.getDataFolder(), "history-menu.yml");
+        this.menuFile = new File(plugin.getDataFolder(), "menus/history-menu.yml");
         reload();
     }
 
@@ -50,7 +50,8 @@ public class HistoryManager {
         historyConfig = YamlConfiguration.loadConfiguration(historyFile);
 
         if (!menuFile.exists()) {
-            plugin.saveResource("history-menu.yml", false);
+            menuFile.getParentFile().mkdirs();
+            plugin.saveResource("menus/history-menu.yml", false);
         }
         menuConfig = YamlConfiguration.loadConfiguration(menuFile);
     }

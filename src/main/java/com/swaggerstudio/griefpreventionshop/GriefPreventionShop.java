@@ -88,10 +88,10 @@ public class GriefPreventionShop extends JavaPlugin {
                     .sendMessage(messageManager.parseColors(" &#FFC427&l║  &c&lCRITICAL ERROR: MISSING DEPENDENCIES"));
             if (!gp)
                 Bukkit.getConsoleSender()
-                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fGriefPrevention: &cNOT FOUND"));
+                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &e♯ &fGriefPrevention: &cNOT FOUND"));
             if (!vault)
                 Bukkit.getConsoleSender()
-                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fVault: &cNOT FOUND"));
+                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &e♯ &fVault: &cNOT FOUND"));
             return false;
         }
         return true;

@@ -1,7 +1,5 @@
 # ==========================================================
-# GRIEF PREVENTION SHOP - CLASSIC HUD
-# ==========================================================
-# Aesthetic: Clean / Classic High-Contrast
+# CLAIM SHOP CONFIGURATION
 # ==========================================================
 
 messages:
@@ -22,17 +20,17 @@ messages:
     amount-set:
       enabled: true
       type: "actionbar"
-      message: "&#FFC427CLAIM SHOP &8➟ &fCart Updated: &e<amount> &fBlocks"
+      message: "&#FFC427CLAIM SHOP &7➟ &fCart Updated: &e<amount> &fBlocks"
 
     cancelled:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fInput cancelled."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fInput cancelled."
 
     timeout:
       enabled: true
       type: "chat, title"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fTimed out, please try again."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fTimed out, please try again."
       title:
         main: "&c&lTIMED OUT"
         sub: "&fSession expired. Please try again."
@@ -44,45 +42,45 @@ messages:
     selected:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fSelected &e<amount> &fclaim blocks."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fSelected &e<amount> &fclaim blocks."
 
     purchase-success:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fPurchased &e<amount> &fblocks for &e<price>&f."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fPurchased &e<amount> &fblocks for &e<price>&f."
 
   error:
     no-permission:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &cAccess Denied! Clearances insufficient."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &cYou do not have permission to do this."
     invalid-input:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fInvalid input. Please enter numbers only."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fInvalid input. Please enter numbers only."
     invalid-amount:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fPlease enter a number greater than 0."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fPlease enter a number greater than 0."
     limit-exceeded:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fOrder Limit! Min: &e<min> &fMax: &e<max>&f."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fOrder Limit! Min: &e<min> &fMax: &e<max>&f."
     not-enough-money:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fYou don't have enough money! Need: &e<price>&f."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fYou don't have enough money! Need: &e<price>&f."
     economy-unavailable:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fEconomy system is unavailable."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fEconomy system is unavailable."
     transaction-failed:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &cSystem Error! Transaction could not be verified."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &cSystem Error! Transaction could not be verified."
 
   admin:
     reloaded:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &8➟ &fConfigs and GUI re-initialized."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &fConfigs and GUI re-initialized."

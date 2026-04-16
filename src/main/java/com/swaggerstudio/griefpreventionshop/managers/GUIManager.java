@@ -34,9 +34,12 @@ public class GUIManager {
     }
 
     public void reload() {
-        File file = new File(plugin.getDataFolder(), "shop-menu.yml");
+        File folder = new File(plugin.getDataFolder(), "menus");
+        if (!folder.exists()) folder.mkdirs();
+
+        File file = new File(folder, "shop-menu.yml");
         if (!file.exists()) {
-            plugin.saveResource("shop-menu.yml", false);
+            plugin.saveResource("menus/shop-menu.yml", false);
         }
         shopConfig = YamlConfiguration.loadConfiguration(file);
         plugin.getHistoryManager().reload();
