@@ -1,0 +1,73 @@
+# ==========================================================
+# GRIEF PREVENTION SHOP - MESSAGES
+# ==========================================================
+# Support Discord: https://discord.gg/Yxq6H8cb
+# Official Website: https://swaggers.studio/
+# ==========================================================
+
+# Available Placeholders:
+# <amount> - Quantity of blocks
+# <price>  - Total or unit cost
+# <unit_price> - Cost per single block
+
+messages:
+  # ----------------------------------------------------------
+  # CUSTOMER INTERFACE
+  # ----------------------------------------------------------
+  shop:
+    input-prompt:
+      enabled: true
+      type: "chat"
+      message: "&#FDC05C&l(!) &fSpecify the desired quantity of blocks in chat. Type &c'abort' &f to cancel."
+    amount-set:
+      enabled: true
+      type: "actionbar"
+      message: "&#FDC05CQuantity Updated &8➟ &f<amount> Blocks"
+    cancelled:
+      enabled: true
+      type: "chat"
+      message: "&#FF5555&l✖ &fSelection process has been terminated."
+    cancelled-timeout:
+      enabled: true
+      type: "chat"
+      message: "&#FF5555&l✖ &fInactivity timeout. Request cancelled."
+    purchased:
+      enabled: true
+      type: "all"
+      message: "&#FDC05C&l✔ &aOrder Finalized! &fAcquired &e<amount> &fclaim blocks."
+      subtitle: "&fTotal Investment: &e$<price>"
+
+  # ----------------------------------------------------------
+  # ERROR HANDLERS
+  # ----------------------------------------------------------
+  error:
+    no-permission:
+      enabled: true
+      type: "chat"
+      message: "&#FF5555&l✖ &cAccess Denied! Required permissions missing."
+    invalid-amount:
+      enabled: true
+      type: "chat"
+      message: "&#FF5555&l✖ &cInvalid Quantity! Please provide a whole number."
+    limit-exceeded:
+      enabled: true
+      type: "chat"
+      message: "&#FF5555&l✖ &cOrder Limit! &fEach transaction must be between &e<min> &fand &e<max> &fblocks."
+    not-enough-money:
+      enabled: true
+      type: "title"
+      message: "&#FF5555&lInsufficient Balance"
+      subtitle: "&fRequired Capital: &e$<price>"
+    transaction-failed:
+      enabled: true
+      type: "chat"
+      message: "&#FF5555&l✖ &cSystem Error! Transaction could not be verified."
+
+  # ----------------------------------------------------------
+  # MANAGEMENT
+  # ----------------------------------------------------------
+  admin:
+    reloaded:
+      enabled: true
+      type: "chat"
+      message: "&#55FF55&l✔ &aSystem Overhaul Complete! Configs and GUI re-initialized."

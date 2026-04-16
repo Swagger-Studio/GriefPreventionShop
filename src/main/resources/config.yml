@@ -1,0 +1,35 @@
+# ==========================================================
+# GRIEF PREVENTION SHOP - CONFIGURATION
+# ==========================================================
+# Support Discord: https://discord.gg/Yxq6H8cb
+# Official Website: https://swaggers.studio/
+# ==========================================================
+# For support or custom feature requests, join our Discord.
+
+# The prefix used in all plugin messages
+# Supports Legacy Codes (&), HEX (&#RRGGBB)
+prefix: "&#FFC427&lCLAIM SHOP &7➟"
+
+# The cost of a single claim block
+price-per-block: 100.0
+
+# Purchase Limits
+# Restrict the amount of blocks a player can buy in a single transaction.
+limits:
+  min-purchase: 1
+  max-purchase: 1000000
+
+# Command settings
+# You can define a main command and multiple aliases.
+# These will be applied immediately upon /gpshop reload.
+commands:
+  main: "claimshop"
+  aliases:
+    - "gpshop"
+    - "griefshop"
+    - "claims"
+
+# Log settings
+logging:
+  enabled: true
+  path: "logs"
