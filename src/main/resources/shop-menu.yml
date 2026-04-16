@@ -1,18 +1,13 @@
 # ==========================================================
-# GRIEF PREVENTION SHOP - GUI CONFIGURATION
+# GRIEF PREVENTION SHOP
 # ==========================================================
-# Support Discord: https://discord.gg/Yxq6H8cb
-# Official Website: https://swaggers.studio/
-# ==========================================================
-# This menu uses a STATEFUL logic. 
-# Players add/remove blocks to their cart, see the total, and confirm.
 
 gui:
   size: 36
-  title: "&#FDC05C&lTREASURY &8➟ &7Order Size: &#FDC05C<amount>"
+  title: "&#FFC427&lTREASURY &8➟ &7Amount: &#FFC427<amount>"
 
   # ----------------------------------------------------------
-  # ORDER EXPANSION (ADDITION)
+  # ADD BLOCKS
   # ----------------------------------------------------------
   buttons:
     add:
@@ -20,135 +15,124 @@ gui:
         amount: 50
         slot: 15
         material: EMERALD_BLOCK
-        display-name: "&#55FF55&lEXPAND ORDER &8➟ &f+50"
+        display-name: "&a&lADD BLOCKS &8➟ &f+50"
         lore:
-          - "&8Logistics"
           - ""
-          - "&7Increase your current order"
-          - "&7by &a50 additional &7blocks."
+          - "&7Increase your order by"
+          - "&7exactly &e50 &7blocks."
           - ""
-          - '&#FDC05C⏵ Left-Click to Expand'
+          - "&e» &fLeft-Click to Add"
       "16":
         amount: 100
         slot: 16
         material: EMERALD_BLOCK
-        display-name: "&#55FF55&lEXPAND ORDER &8➟ &f+100"
+        display-name: "&a&lADD BLOCKS &8➟ &f+100"
         lore:
-          - "&8Logistics"
           - ""
-          - "&7Increase your current order"
-          - "&7by &a100 additional &7blocks."
+          - "&7Increase your order by"
+          - "&7exactly &e100 &7blocks."
           - ""
-          - '&#FDC05C⏵ Left-Click to Expand'
+          - "&e» &fLeft-Click to Add"
       "17":
         amount: 500
         slot: 17
         material: EMERALD_BLOCK
-        display-name: "&#55FF55&lEXPAND ORDER &8➟ &f+500"
+        display-name: "&a&lADD BLOCKS &8➟ &f+500"
         lore:
-          - "&8Logistics"
           - ""
-          - "&7Increase your current order"
-          - "&7by &a500 additional &7blocks."
+          - "&7Increase your order by"
+          - "&7exactly &e500 &7blocks."
           - ""
-          - '&#FDC05C⏵ Left-Click to Expand'
+          - "&e» &fLeft-Click to Add"
 
     # ----------------------------------------------------------
-    # ORDER REDUCTION (SUBTRACTION)
+    # REMOVE BLOCKS
     # ----------------------------------------------------------
     remove:
       "11":
         amount: 50
         slot: 11
         material: REDSTONE_BLOCK
-        display-name: "&#FF5555&lREDUCE ORDER &8➟ &f-50"
+        display-name: "&c&lREMOVE BLOCKS &8➟ &f-50"
         lore:
-          - "&8Logistics"
           - ""
-          - "&7Decrease your current order"
-          - "&7by &c50 blocks&7."
+          - "&7Decrease your order by"
+          - "&7exactly &c50 &7blocks."
           - ""
-          - '&#FDC05C⏵ Left-Click to Reduce'
+          - "&c» &fLeft-Click to Remove"
       "10":
         amount: 100
         slot: 10
         material: REDSTONE_BLOCK
-        display-name: "&#FF5555&lREDUCE ORDER &8➟ &f-100"
+        display-name: "&c&lREMOVE BLOCKS &8➟ &f-100"
         lore:
-          - "&8Logistics"
           - ""
-          - "&7Decrease your current order"
-          - "&7by &c100 blocks&7."
+          - "&7Decrease your order by"
+          - "&7exactly &c100 &7blocks."
           - ""
-          - '&#FDC05C⏵ Left-Click to Reduce'
+          - "&c» &fLeft-Click to Remove"
       "9":
         amount: 500
         slot: 9
         material: REDSTONE_BLOCK
-        display-name: "&#FF5555&lREDUCE ORDER &8➟ &f-500"
+        display-name: "&c&lREMOVE BLOCKS &8➟ &f-500"
         lore:
-          - "&8Logistics"
           - ""
-          - "&7Decrease your current order"
-          - "&7by &c500 blocks&7."
+          - "&7Decrease your order by"
+          - "&7exactly &c500 &7blocks."
           - ""
-          - '&#FDC05C⏵ Left-Click to Reduce'
+          - "&c» &fLeft-Click to Remove"
 
   # ----------------------------------------------------------
-  # CUSTOM QUOTA
+  # CUSTOM INPUT
   # ----------------------------------------------------------
   custom-input:
     slot: 31
     material: PAPER
-    display-name: "&#55FFFF&lCUSTOM QUOTA"
+    display-name: "&b&lCUSTOM QUANTITY"
     lore:
-      - "&8Logistics"
       - ""
-      - "&7Prefer a specific number?"
-      - "&7Type the exact quantity in"
-      - "&7the command relay."
+      - "&7Manually enter the exact"
+      - "&7number of blocks to buy."
       - ""
-      - '&#FDC05C⏵ Click to Dispatch'
+      - "&b» &fClick to Set Amount"
 
   # ----------------------------------------------------------
-  # ORDER SUMMARY
+  # TOTAL QUOTE
   # ----------------------------------------------------------
   info:
     slot: 13
     material: GOLDEN_SHOVEL
-    display-name: "&#FDC05C&lORDER SUMMARY"
+    display-name: "&#FFC427&lTOTAL QUOTE"
     lore:
-      - "&8Invoicing"
       - ""
-      - " &#FDC05C◆ &fUnits: &e<amount> blocks"
-      - " &#FDC05C◆ &fRate: &a$<unit_price> ea."
+      - " &7➟ &fQuantity: &e<amount> blocks"
+      - " &7➟ &fUnit Price: &a<unit_price>"
       - ""
-      - " &#FDC05C◆ &fFinal Cost: &6$<total>"
-      - ''
+      - " &7➟ &fTotal Cost: &6<total>"
+      - ""
 
   # ----------------------------------------------------------
-  # DISPATCH & ABORT
+  # NAVIGATION
   # ----------------------------------------------------------
   navigation:
     cancel:
       slot: 30
       material: BARRIER
-      display-name: "&#FF5555&lABORT SHIPMENT"
+      display-name: "&c&lCANCEL ORDER"
       lore:
-        - "&8Return"
         - ""
         - "&7Discard this order and"
-        - "&7return to the field."
+        - "&7exit the shop."
         - ""
-        - '&#FDC05C⏵ Click to Abort'
+        - "&c» &fClick to Cancel"
     confirm:
       slot: 32
       material: NETHER_STAR
-      display-name: "&#55FF55&lDISPATCH SHIPMENT"
+      display-name: "&a&lCONFIRM PURCHASE"
       lore:
-        - "&aVerification"
         - ""
-        - "&7Confirm the quoted cost"
-        - "&7and process the delivery."
+        - "&7Finalize the purchase of"
+        - "&7your selected blocks."
         - ""
-        - '&#FDC05C⏵ Click to Dispatch'
+        - "&a» &fClick to Buy"

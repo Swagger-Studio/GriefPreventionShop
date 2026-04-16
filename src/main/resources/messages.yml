@@ -1,73 +1,88 @@
 # ==========================================================
-# GRIEF PREVENTION SHOP - MESSAGES
+# GRIEF PREVENTION SHOP - CLASSIC HUD
 # ==========================================================
-# Support Discord: https://discord.gg/Yxq6H8cb
-# Official Website: https://swaggers.studio/
+# Aesthetic: Clean / Classic High-Contrast
 # ==========================================================
-
-# Available Placeholders:
-# <amount> - Quantity of blocks
-# <price>  - Total or unit cost
-# <unit_price> - Cost per single block
 
 messages:
-  # ----------------------------------------------------------
-  # CUSTOMER INTERFACE
-  # ----------------------------------------------------------
   shop:
-    input-prompt:
+    enter-amount:
       enabled: true
-      type: "chat"
-      message: "&#FDC05C&l(!) &fSpecify the desired quantity of blocks in chat. Type &c'abort' &f to cancel."
+      type: "title, actionbar"
+      actionbar:
+        message: "&e<seconds> &fSeconds Remaining"
+      title:
+        main: "&e&lENTER AMOUNT"
+        sub: "&fPlease specify quantity in chat... (&e<seconds>s&f)"
+        duration:
+          fade_in: 0
+          stay: 2000
+          fade_out: 0
+
     amount-set:
       enabled: true
       type: "actionbar"
-      message: "&#FDC05CQuantity Updated &8➟ &f<amount> Blocks"
+      message: "&#FFC427CLAIM SHOP &8➟ &fCart Updated: &e<amount> &fBlocks"
+
     cancelled:
       enabled: true
       type: "chat"
-      message: "&#FF5555&l✖ &fSelection process has been terminated."
-    cancelled-timeout:
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fInput cancelled."
+
+    timeout:
+      enabled: true
+      type: "chat, title"
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fTimed out, please try again."
+      title:
+        main: "&c&lTIMED OUT"
+        sub: "&fSession expired. Please try again."
+        duration:
+          fade_in: 0
+          stay: 2000
+          fade_out: 0
+
+    selected:
       enabled: true
       type: "chat"
-      message: "&#FF5555&l✖ &fInactivity timeout. Request cancelled."
-    purchased:
-      enabled: true
-      type: "all"
-      message: "&#FDC05C&l✔ &aOrder Finalized! &fAcquired &e<amount> &fclaim blocks."
-      subtitle: "&fTotal Investment: &e$<price>"
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fSelected &e<amount> &fclaim blocks."
 
-  # ----------------------------------------------------------
-  # ERROR HANDLERS
-  # ----------------------------------------------------------
+    purchase-success:
+      enabled: true
+      type: "chat"
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fPurchased &e<amount> &fblocks for &e<price>&f."
+
   error:
     no-permission:
       enabled: true
       type: "chat"
-      message: "&#FF5555&l✖ &cAccess Denied! Required permissions missing."
+      message: "&#FFC427&lCLAIM SHOP &8➟ &cAccess Denied! Clearances insufficient."
+    invalid-input:
+      enabled: true
+      type: "chat"
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fInvalid input. Please enter numbers only."
     invalid-amount:
       enabled: true
       type: "chat"
-      message: "&#FF5555&l✖ &cInvalid Quantity! Please provide a whole number."
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fPlease enter a number greater than 0."
     limit-exceeded:
       enabled: true
       type: "chat"
-      message: "&#FF5555&l✖ &cOrder Limit! &fEach transaction must be between &e<min> &fand &e<max> &fblocks."
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fOrder Limit! Min: &e<min> &fMax: &e<max>&f."
     not-enough-money:
       enabled: true
-      type: "title"
-      message: "&#FF5555&lInsufficient Balance"
-      subtitle: "&fRequired Capital: &e$<price>"
+      type: "chat"
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fYou don't have enough money! Need: &e<price>&f."
+    economy-unavailable:
+      enabled: true
+      type: "chat"
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fEconomy system is unavailable."
     transaction-failed:
       enabled: true
       type: "chat"
-      message: "&#FF5555&l✖ &cSystem Error! Transaction could not be verified."
+      message: "&#FFC427&lCLAIM SHOP &8➟ &cSystem Error! Transaction could not be verified."
 
-  # ----------------------------------------------------------
-  # MANAGEMENT
-  # ----------------------------------------------------------
   admin:
     reloaded:
       enabled: true
       type: "chat"
-      message: "&#55FF55&l✔ &aSystem Overhaul Complete! Configs and GUI re-initialized."
+      message: "&#FFC427&lCLAIM SHOP &8➟ &fConfigs and GUI re-initialized."

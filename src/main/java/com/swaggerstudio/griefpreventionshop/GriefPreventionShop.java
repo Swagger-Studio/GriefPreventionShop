@@ -50,19 +50,27 @@ public class GriefPreventionShop extends JavaPlugin {
         // 6. Initialize bStats
         int pluginId = 30792;
         Metrics metrics = new Metrics(this, pluginId);
-        metrics.addCustomChart(new SimplePie("price_per_block", () -> String.valueOf(configManager.getPricePerBlock())));
+        metrics.addCustomChart(
+                new SimplePie("price_per_block", () -> String.valueOf(configManager.getPricePerBlock())));
     }
 
     private void sendStartupBanner() {
         String version = getDescription().getVersion();
         Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(""));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l╔═════════════════════════════════════════════════╗"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &f&lGriefPreventionShop &8- &7v" + version + "           &#FFC427&l║"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &7Premium Claim Shop Addon by SwaggerStudio  &#FFC427&l║"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l╠═════════════════════════════════════════════════╣"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fStatus: &a&lONLINE                        &#FFC427&l║"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb&#FFC427&l  ║"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l╚═════════════════════════════════════════════════╝"));
+        Bukkit.getConsoleSender().sendMessage(
+                messageManager.parseColors(" &#FFC427&l╔═════════════════════════════════════════════════╗"));
+        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                " &#FFC427&l║  &f&lGriefPreventionShop &8- &7v" + version + "                   &#FFC427&l║"));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &7Premium Claim Shop Addon by SwaggerStudio      &#FFC427&l║"));
+        Bukkit.getConsoleSender().sendMessage(
+                messageManager.parseColors(" &#FFC427&l╠═════════════════════════════════════════════════╣"));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &fStatus: &a&lONLINE                                 &#FFC427&l║"));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb&r           &#FFC427&l║"));
+        Bukkit.getConsoleSender().sendMessage(
+                messageManager.parseColors(" &#FFC427&l╚═════════════════════════════════════════════════╝"));
         Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(""));
     }
 
@@ -71,9 +79,14 @@ public class GriefPreventionShop extends JavaPlugin {
         boolean vault = Bukkit.getPluginManager().getPlugin("Vault") != null;
 
         if (!gp || !vault) {
-            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &c&lCRITICAL ERROR: MISSING DEPENDENCIES"));
-            if (!gp) Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fGriefPrevention: &cNOT FOUND"));
-            if (!vault) Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fVault: &cNOT FOUND"));
+            Bukkit.getConsoleSender()
+                    .sendMessage(messageManager.parseColors(" &#FFC427&l║  &c&lCRITICAL ERROR: MISSING DEPENDENCIES"));
+            if (!gp)
+                Bukkit.getConsoleSender()
+                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fGriefPrevention: &cNOT FOUND"));
+            if (!vault)
+                Bukkit.getConsoleSender()
+                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &8➟ &fVault: &cNOT FOUND"));
             return false;
         }
         return true;
@@ -125,7 +138,7 @@ public class GriefPreventionShop extends JavaPlugin {
     public LogManager getLogManager() {
         return logManager;
     }
-    
+
     public void reloadPlugin() {
         configManager.reload();
         messageManager.reload();

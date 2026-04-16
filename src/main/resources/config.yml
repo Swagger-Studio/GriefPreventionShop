@@ -10,6 +10,10 @@
 # Supports Legacy Codes (&), HEX (&#RRGGBB)
 prefix: "&#FFC427&lCLAIM SHOP &7➟"
 
+# The currency symbol used for all money displays
+# Supports HEX and Legacy
+currency-symbol: "&e$"
+
 # The cost of a single claim block
 price-per-block: 100.0
 

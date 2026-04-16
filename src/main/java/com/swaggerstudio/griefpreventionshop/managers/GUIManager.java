@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -103,6 +104,7 @@ public class GUIManager {
                     .map(line -> plugin.getMessageManager().parseColors(line))
                     .collect(Collectors.toList()));
             
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
             item.setItemMeta(meta);
         }
         return item;
@@ -111,9 +113,10 @@ public class GUIManager {
     private String replacePlaceholders(String text, int amount) {
         double unitPrice = plugin.getConfigManager().getPricePerBlock();
         double total = Math.abs(amount) * unitPrice;
+        String symbol = plugin.getConfigManager().getCurrencySymbol();
         return text.replace("<amount>", String.valueOf(amount))
-                   .replace("<unit_price>", NumberUtil.formatCurrency(unitPrice))
-                   .replace("<total>", NumberUtil.formatCurrency(total));
+                   .replace("<unit_price>", NumberUtil.formatCurrency(unitPrice, symbol))
+                   .replace("<total>", NumberUtil.formatCurrency(total, symbol));
     }
 
     public void handleAction(Player player, int slot) {
@@ -128,7 +131,6 @@ public class GUIManager {
         if (checkStatic(player, "gui.custom-input", slot)) {
             player.closeInventory();
             plugin.getChatInputListener().startSession(player);
-            plugin.getMessageManager().sendMessage(player, "shop.input-prompt");
             return;
         }
         // Check Cancel
@@ -140,6 +142,12 @@ public class GUIManager {
         }
         // Check Confirm
         if (checkStatic(player, "gui.navigation.confirm", slot)) {
+            // Validation: Empty Cart
+            if (currentAmount <= 0) {
+                plugin.getMessageManager().sendMessage(player, "error.invalid-amount");
+                return;
+            }
+
             // Validation: Limits
             int min = plugin.getConfigManager().getMinPurchase();
             int max = plugin.getConfigManager().getMaxPurchase();
@@ -183,16 +191,17 @@ public class GUIManager {
     private void processPurchase(Player player, int amount) {
         double pricePerBlock = plugin.getConfigManager().getPricePerBlock();
         double totalPrice = amount * pricePerBlock;
+        String symbol = plugin.getConfigManager().getCurrencySymbol();
 
         if (!plugin.getEconomyManager().hasBalance(player, totalPrice)) {
-            plugin.getMessageManager().sendMessage(player, "error.not-enough-money", "<price>", String.format("%.2f", totalPrice));
+            plugin.getMessageManager().sendMessage(player, "error.not-enough-money", "<price>", NumberUtil.formatCurrency(totalPrice, symbol));
             return;
         }
 
         if (plugin.getEconomyManager().withdraw(player, totalPrice)) {
             plugin.getClaimManager().addClaimBlocks(player, amount);
             plugin.getLogManager().logPurchase(player.getName(), amount, totalPrice, player.getWorld().getName());
-            plugin.getMessageManager().sendMessage(player, "shop.purchased", "<amount>", String.valueOf(amount));
+            plugin.getMessageManager().sendMessage(player, "shop.purchase-success", "<amount>", String.valueOf(amount), "<price>", NumberUtil.formatCurrency(totalPrice, symbol));
         } else {
             plugin.getMessageManager().sendMessage(player, "error.transaction-failed");
         }

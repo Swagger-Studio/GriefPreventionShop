@@ -37,37 +37,71 @@ public class MessageManager {
         ConfigurationSection section = messages.getConfigurationSection("messages." + path);
         if (section == null || !section.getBoolean("enabled", true)) return;
 
-        String type = section.getString("type", "chat").toLowerCase();
-        String msg = section.getString("message", "");
-        String subtitle = section.getString("subtitle", "");
+        String typeStr = section.getString("type", "chat").toLowerCase();
+        String[] types = typeStr.split("\\s*,\\s*");
 
-        // Apply placeholders
-        if (placeholders.length > 0 && placeholders.length % 2 == 0) {
-            for (int i = 0; i < placeholders.length; i += 2) {
-                msg = msg.replace(placeholders[i], placeholders[i + 1]);
-                subtitle = subtitle.replace(placeholders[i], placeholders[i + 1]);
+        for (String type : types) {
+            switch (type) {
+                case "title":
+                    handleTitle(player, section, placeholders);
+                    break;
+                case "actionbar":
+                    handleActionBar(player, section, placeholders);
+                    break;
+                default:
+                    String msg = section.getString("message", "");
+                    player.sendMessage(parseColors(applyPlaceholders(msg, placeholders)));
+                    break;
             }
         }
+    }
 
-        Component component = parseColors(msg);
-        Component subComponent = parseColors(subtitle);
+    private void handleTitle(Player player, ConfigurationSection section, String... placeholders) {
+        String main, sub;
+        int fadeIn = 10, stay = 70, fadeOut = 20;
 
-        switch (type) {
-            case "title":
-                player.showTitle(Title.title(component, subComponent));
-                break;
-            case "actionbar":
-                player.sendActionBar(component);
-                break;
-            case "all":
-                player.sendMessage(component);
-                player.sendActionBar(component);
-                player.showTitle(Title.title(component, subComponent));
-                break;
-            default:
-                player.sendMessage(component);
-                break;
+        if (section.isConfigurationSection("title")) {
+            ConfigurationSection titleSec = section.getConfigurationSection("title");
+            main = titleSec.getString("main", "");
+            sub = titleSec.getString("sub", "");
+            fadeIn = titleSec.getInt("duration.fade_in", 10);
+            stay = titleSec.getInt("duration.stay", 70);
+            fadeOut = titleSec.getInt("duration.fade_out", 20);
+        } else {
+            main = section.getString("message", "");
+            sub = section.getString("subtitle", "");
         }
+
+        Component mainComp = parseColors(applyPlaceholders(main, placeholders));
+        Component subComp = parseColors(applyPlaceholders(sub, placeholders));
+        
+        Title.Times times = Title.Times.times(
+                java.time.Duration.ofMillis(fadeIn),
+                java.time.Duration.ofMillis(stay),
+                java.time.Duration.ofMillis(fadeOut)
+        );
+        
+        player.showTitle(Title.title(mainComp, subComp, times));
+    }
+
+    private void handleActionBar(Player player, ConfigurationSection section, String... placeholders) {
+        String msg;
+        if (section.isConfigurationSection("actionbar")) {
+            msg = section.getConfigurationSection("actionbar").getString("message", "");
+        } else {
+            msg = section.getString("message", "");
+        }
+        player.sendActionBar(parseColors(applyPlaceholders(msg, placeholders)));
+    }
+
+    private String applyPlaceholders(String text, String... placeholders) {
+        if (text == null || text.isEmpty() || placeholders.length == 0 || placeholders.length % 2 != 0) {
+            return text;
+        }
+        for (int i = 0; i < placeholders.length; i += 2) {
+            text = text.replace(placeholders[i], placeholders[i + 1]);
+        }
+        return text;
     }
 
     public Component parseColors(String text) {
@@ -106,6 +140,6 @@ public class MessageManager {
                    .replace("&o", "<italic>")
                    .replace("&r", "<reset>");
 
-        return miniMessage.deserialize(text);
+        return miniMessage.deserialize("<!italic>" + text);
     }
 }

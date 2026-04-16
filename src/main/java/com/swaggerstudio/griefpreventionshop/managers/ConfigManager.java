@@ -31,6 +31,10 @@ public class ConfigManager {
         return config.getString("prefix", "&#FFC427&lCLAIM SHOP &8➟");
     }
 
+    public String getCurrencySymbol() {
+        return config.getString("currency-symbol", "$");
+    }
+
     public double getPricePerBlock() {
         return config.getDouble("price-per-block", 100.0);
     }
