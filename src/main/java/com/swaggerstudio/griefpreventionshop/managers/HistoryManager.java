@@ -16,39 +16,30 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryManager {
 
     private final GriefPreventionShop plugin;
-    private FileConfiguration historyConfig;
-    private final File historyFile;
     private FileConfiguration menuConfig;
     private final File menuFile;
 
     public HistoryManager(GriefPreventionShop plugin) {
         this.plugin = plugin;
-        this.historyFile = new File(plugin.getDataFolder(), "data/history.yml");
         this.menuFile = new File(plugin.getDataFolder(), "menus/history-menu.yml");
         reload();
     }
 
     public void reload() {
-        if (!historyFile.exists()) {
-            try {
-                historyFile.getParentFile().mkdirs();
-                historyFile.createNewFile();
-            } catch (IOException e) {
-                plugin.getLogger().severe("Could not create history.yml!");
-            }
-        }
-        historyConfig = YamlConfiguration.loadConfiguration(historyFile);
-
         if (!menuFile.exists()) {
             menuFile.getParentFile().mkdirs();
             plugin.saveResource("menus/history-menu.yml", false);
@@ -57,31 +48,19 @@ public class HistoryManager {
     }
 
     public void addEntry(Player player, int amount, double price) {
-        String uuid = player.getUniqueId().toString();
-        List<Map<?, ?>> entries = historyConfig.getMapList(uuid);
-        
-        Map<String, Object> entry = new HashMap<>();
-        entry.put("timestamp", System.currentTimeMillis());
-        entry.put("amount", amount);
-        entry.put("price", price);
-        entry.put("world", player.getWorld().getName());
-
-        entries.add(0, entry);
-
-        int max = plugin.getConfig().getInt("history.max-entries", 50);
-        if (entries.size() > max) {
-            entries = entries.subList(0, max);
-        }
-
-        historyConfig.set(uuid, entries);
-        save();
-    }
-
-    private void save() {
-        try {
-            historyConfig.save(historyFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Could not save history.yml!");
+        String sql = "INSERT INTO gpshop_history (player_uuid, timestamp, amount, price, world) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = plugin.getDatabaseManager().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, player.getUniqueId().toString());
+            ps.setLong(2, System.currentTimeMillis());
+            ps.setInt(3, amount);
+            ps.setDouble(4, price);
+            ps.setString(5, player.getWorld().getName());
+            
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to log purchase to database: " + e.getMessage());
         }
     }
 
@@ -90,11 +69,7 @@ public class HistoryManager {
         int size = menuConfig.getInt("gui.size", 54);
         Inventory inv = Bukkit.createInventory(new ShopHolder(), size, plugin.getMessageManager().parseColors(titleStr));
 
-        String uuid = player.getUniqueId().toString();
-        List<Map<?, ?>> entries = historyConfig.getMapList(uuid);
         String symbol = plugin.getConfigManager().getCurrencySymbol();
-
-        // Timezone setup
         String tz = plugin.getConfig().getString("history.timezone", "Asia/Kolkata");
         ZoneId zoneId = ZoneId.of(tz);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -102,36 +77,48 @@ public class HistoryManager {
         ConfigurationSection itemSec = menuConfig.getConfigurationSection("gui.item");
         Material mat = Material.valueOf(itemSec.getString("material", "PAPER"));
 
-        for (int i = 0; i < Math.min(entries.size(), size); i++) {
-            Map<?, ?> data = entries.get(i);
-            long ts = (long) data.get("timestamp");
-            int amount = (int) data.get("amount");
-            double price = (double) data.get("price");
-            String world = (String) data.get("world");
+        String sql = "SELECT * FROM gpshop_history WHERE player_uuid = ? ORDER BY id DESC LIMIT ?";
+        try (Connection conn = plugin.getDatabaseManager().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, player.getUniqueId().toString());
+            ps.setInt(2, size);
+            
+            ResultSet rs = ps.executeQuery();
+            int slot = 0;
+            while (rs.next()) {
+                long ts = rs.getLong("timestamp");
+                int amount = rs.getInt("amount");
+                double price = rs.getDouble("price");
+                String world = rs.getString("world");
+                int id = rs.getInt("id");
 
-            ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), zoneId);
-            String formattedDate = dateTime.format(formatter);
+                ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts), zoneId);
+                String formattedDate = dateTime.format(formatter);
 
-            ItemStack item = new ItemStack(mat);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                String name = itemSec.getString("display-name", "&eTransaction #<id>")
-                        .replace("<id>", String.valueOf(entries.size() - i));
-                meta.displayName(plugin.getMessageManager().parseColors(name));
+                ItemStack item = new ItemStack(mat);
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null) {
+                    String name = itemSec.getString("display-name", "&eTransaction #<id>")
+                            .replace("<id>", String.valueOf(id));
+                    meta.displayName(plugin.getMessageManager().parseColors(name));
 
-                List<Component> lore = new ArrayList<>();
-                for (String line : itemSec.getStringList("lore")) {
-                    lore.add(plugin.getMessageManager().parseColors(line
-                            .replace("<date>", formattedDate)
-                            .replace("<amount>", String.valueOf(amount))
-                            .replace("<price>", NumberUtil.formatCurrency(price, symbol))
-                            .replace("<world>", world)));
+                    List<Component> lore = new ArrayList<>();
+                    for (String line : itemSec.getStringList("lore")) {
+                        lore.add(plugin.getMessageManager().parseColors(line
+                                .replace("<date>", formattedDate)
+                                .replace("<amount>", String.valueOf(amount))
+                                .replace("<price>", NumberUtil.formatCurrency(price, symbol))
+                                .replace("<world>", world)));
+                    }
+                    meta.lore(lore);
+                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                    item.setItemMeta(meta);
                 }
-                meta.lore(lore);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                item.setItemMeta(meta);
+                inv.setItem(slot++, item);
             }
-            inv.setItem(i, item);
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to load history from database: " + e.getMessage());
         }
 
         player.openInventory(inv);

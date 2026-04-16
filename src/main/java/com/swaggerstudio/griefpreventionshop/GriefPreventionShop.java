@@ -19,6 +19,7 @@ public class GriefPreventionShop extends JavaPlugin {
     private LogManager logManager;
     private HistoryManager historyManager;
     private WebhookManager webhookManager;
+    private DatabaseManager databaseManager;
     private ChatInputListener chatInputListener;
 
     @Override
@@ -45,6 +46,7 @@ public class GriefPreventionShop extends JavaPlugin {
         this.logManager = new LogManager(this);
         this.historyManager = new HistoryManager(this);
         this.webhookManager = new WebhookManager(this);
+        this.databaseManager = new DatabaseManager(this);
         this.guiManager = new GUIManager(this); // GUIManager.reload() needs History/Webhook
         this.chatInputListener = new ChatInputListener(this);
 
@@ -109,6 +111,9 @@ public class GriefPreventionShop extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (databaseManager != null) {
+            databaseManager.close();
+        }
         getLogger().info("GriefPreventionShop has been disabled!");
     }
 
@@ -150,6 +155,10 @@ public class GriefPreventionShop extends JavaPlugin {
 
     public WebhookManager getWebhookManager() {
         return webhookManager;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
     public void reloadPlugin() {

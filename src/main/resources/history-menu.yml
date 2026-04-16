@@ -1,23 +1,21 @@
 # ==========================================================
 # GRIEF PREVENTION SHOP - HISTORY MENU
 # ==========================================================
-# Aesthetic: Clean / Classic High-Contrast
-# ==========================================================
 
 gui:
-  title: "&#FFC427&lCLAIM SHOP &8➟ &7History"
+  title: "&0Claimshop | History"
   size: 54
 
   # The item template used for each transaction entry
   item:
     material: PAPER
-    display-name: "&6&l#<id> &8➟ &fTransaction"
+    display-name: "&6#<id> &7| &fTransaction"
     lore:
-      - "&8<date>"
+      - "&7<date>"
       - ""
-      - " &e♯ &7Quantity: &f<amount> blocks"
-      - " &e♯ &7Total Cost: &a<price>"
+      - " &e♯ &fQuantity: &f<amount> blocks"
+      - " &e♯ &fTotal Cost: &a<price>"
       - ""
-      - "&7Location: &7<world>"
+      - "&eLocation: &f<world>"
       - ""
-      - " &c» &fPurchase Recorded"
+      - "&e♯ Purchase Recorded"

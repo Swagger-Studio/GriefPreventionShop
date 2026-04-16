@@ -59,3 +59,15 @@ history:
   timezone: "Asia/Kolkata"
   # Maximum entries to store in history per player
   max-entries: 50
+
+# Database Configuration
+# Supports H2 (local file) and MYSQL (remote server)
+# 'history.db' will be created in the root plugin folder for H2.
+database:
+  type: "H2" # Options: H2, MYSQL
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "gpshop"
+    username: "root"
+    password: ""

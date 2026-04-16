@@ -81,15 +81,14 @@ public class WebhookManager {
 
         // Fields
         json.append("\"fields\": [");
-        @SuppressWarnings("unchecked")
-        List<ConfigurationSection> fields = (List<ConfigurationSection>) config.getList("embed.fields");
-        if (fields != null) {
-            for (int i = 0; i < fields.size(); i++) {
-                Object obj = fields.get(i);
-                if (obj instanceof ConfigurationSection) {
-                    ConfigurationSection field = (ConfigurationSection) obj;
-                    String name = field.getString("name", "");
-                    String value = field.getString("value", "")
+        List<?> rawFields = config.getList("embed.fields");
+        if (rawFields != null) {
+            for (int i = 0; i < rawFields.size(); i++) {
+                Object obj = rawFields.get(i);
+                if (obj instanceof java.util.Map) {
+                    java.util.Map<?, ?> field = (java.util.Map<?, ?>) obj;
+                    String name = String.valueOf(field.get("name") != null ? field.get("name") : "");
+                    String value = String.valueOf(field.get("value") != null ? field.get("value") : "")
                             .replace("<player>", player.getName())
                             .replace("<amount>", String.valueOf(amount))
                             .replace("<price>", formattedPrice)
@@ -97,12 +96,15 @@ public class WebhookManager {
                             .replace("<x>", String.valueOf(loc.getBlockX()))
                             .replace("<y>", String.valueOf(loc.getBlockY()))
                             .replace("<z>", String.valueOf(loc.getBlockZ()));
-                    boolean inline = field.getBoolean("inline", true);
+                    boolean inline = true;
+                    if (field.containsKey("inline")) {
+                        inline = Boolean.parseBoolean(String.valueOf(field.get("inline")));
+                    }
 
                     json.append("{ \"name\": \"").append(escapeJson(name)).append("\", ");
                     json.append("\"value\": \"").append(escapeJson(value)).append("\", ");
                     json.append("\"inline\": ").append(inline).append(" }");
-                    if (i < fields.size() - 1) json.append(", ");
+                    if (i < rawFields.size() - 1) json.append(", ");
                 }
             }
         }
