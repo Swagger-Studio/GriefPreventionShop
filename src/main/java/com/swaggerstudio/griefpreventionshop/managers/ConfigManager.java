@@ -66,32 +66,52 @@ public class ConfigManager {
             bukkitCommandMap.setAccessible(true);
             CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
 
-            // 1. Unregister old command
+            // 1. Unregister old command names and aliases
             unregisterCommand(commandMap, name);
-            for (String alias : aliases) {
-                unregisterCommand(commandMap, alias);
+            if (aliases != null) {
+                for (String alias : aliases) {
+                    unregisterCommand(commandMap, alias);
+                }
             }
 
             // 2. Register newest version
             MainCommand cmd = new MainCommand(plugin, name);
-            cmd.setAliases(aliases);
-            commandMap.register(plugin.getName(), cmd);
+            if (aliases != null) {
+                cmd.setAliases(aliases);
+            }
+            commandMap.register(plugin.getName().toLowerCase(), cmd);
             
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (Exception e) {
             plugin.getLogger().severe("Could not register command " + name + " dynamically: " + e.getMessage());
         }
     }
 
     private void unregisterCommand(CommandMap commandMap, String name) {
         try {
-            Field knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
+            // Support both direct and proxied command maps
+            Field knownCommandsField;
+            try {
+                knownCommandsField = commandMap.getClass().getDeclaredField("knownCommands");
+            } catch (NoSuchFieldException e) {
+                knownCommandsField = commandMap.getClass().getSuperclass().getDeclaredField("knownCommands");
+            }
+            
             knownCommandsField.setAccessible(true);
             @SuppressWarnings("unchecked")
             Map<String, org.bukkit.command.Command> knownCommands = (Map<String, org.bukkit.command.Command>) knownCommandsField.get(commandMap);
-            knownCommands.remove(name);
-            knownCommands.remove(plugin.getName().toLowerCase() + ":" + name);
+            
+            String pluginPrefix = plugin.getName().toLowerCase() + ":";
+            knownCommands.remove(name.toLowerCase());
+            knownCommands.remove(pluginPrefix + name.toLowerCase());
+            
+            // Also handle case sensitivity if necessary
+            knownCommands.entrySet().removeIf(entry -> 
+                entry.getKey().equalsIgnoreCase(name) || 
+                entry.getKey().equalsIgnoreCase(pluginPrefix + name)
+            );
+            
         } catch (Exception e) {
-            // Fallback for different server software versions
+            // Silent fallback
         }
     }
 }

@@ -1,9 +1,9 @@
 # ==========================================================
-# GRIEF PREVENTION SHOP
+# CLAIM SHOP CONFIGURATION
 # ==========================================================
 gui:
   size: 36
-  title: "&#FFC427&lCLAIM SHOP &8➟ &7Amount: &#FFC427<amount> &e♯"
+  title: "&0Claim Shop"
   filler:
     material: BLACK_STAINED_GLASS_PANE
     display-name: " "
@@ -14,10 +14,10 @@ gui:
     display-name: "&#FFC427&lYOUR ACCOUNT"
     lore:
       - ""
-      - "&7User: &f<player>"
+      - "&fUser: &f<player>"
       - ""
-      - " &e♯ &7Balance: &a<money>"
-      - " &e♯ &7Blocks: &e<blocks>"
+      - " &e♯ &fBalance: &a<money>"
+      - " &e♯ &fBlocks: &e<blocks>"
       - ""
   buttons:
     add:
@@ -28,10 +28,10 @@ gui:
         display-name: "&aAdd 50"
         lore:
           - ""
-          - "&7Increase your order by"
-          - "&7exactly &e50 &7blocks."
+          - "&fIncrease your order by"
+          - "&fexactly &e50 &fblocks."
           - ""
-          - "&e» &fLeft-Click to Add"
+          - "&e♯ Left-Click to Add"
       "16":
         amount: 100
         slot: 16
@@ -39,10 +39,10 @@ gui:
         display-name: "&aAdd 100"
         lore:
           - ""
-          - "&7Increase your order by"
-          - "&7exactly &e100 &7blocks."
+          - "&fIncrease your order by"
+          - "&fexactly &e100 &fblocks."
           - ""
-          - "&e» &fLeft-Click to Add"
+          - "&e♯ Left-Click to Add"
       "17":
         amount: 500
         slot: 17
@@ -50,10 +50,10 @@ gui:
         display-name: "&aAdd 500"
         lore:
           - ""
-          - "&7Increase your order by"
-          - "&7exactly &e500 &7blocks."
+          - "&fIncrease your order by"
+          - "&fexactly &e500 &fblocks."
           - ""
-          - "&e» &fLeft-Click to Add"
+          - "&e♯ Left-Click to Add"
     remove:
       "11":
         amount: 50
@@ -62,10 +62,10 @@ gui:
         display-name: "&cRemove 50"
         lore:
           - ""
-          - "&7Decrease your order by"
-          - "&7exactly &c50 &7blocks."
+          - "&fDecrease your order by"
+          - "&fexactly &c50 &fblocks."
           - ""
-          - "&c» &fLeft-Click to Remove"
+          - "&e♯ Left-Click to Remove"
       "10":
         amount: 100
         slot: 10
@@ -73,10 +73,10 @@ gui:
         display-name: "&cRemove 100"
         lore:
           - ""
-          - "&7Decrease your order by"
-          - "&7exactly &c100 &7blocks."
+          - "&fDecrease your order by"
+          - "&fexactly &c100 &fblocks."
           - ""
-          - "&c» &fLeft-Click to Remove"
+          - "&e♯ Left-Click to Remove"
       "9":
         amount: 500
         slot: 9
@@ -84,30 +84,30 @@ gui:
         display-name: "&cRemove 500"
         lore:
           - ""
-          - "&7Decrease your order by"
-          - "&7exactly &c500 &7blocks."
+          - "&fDecrease your order by"
+          - "&fexactly &c500 &fblocks."
           - ""
-          - "&c» &fLeft-Click to Remove"
+          - "&e♯ Left-Click to Remove"
   custom-input:
     slot: 31
     material: PAPER
     display-name: "&b&lCUSTOM QUANTITY"
     lore:
       - ""
-      - "&7Manually enter the exact"
-      - "&7number of blocks to buy."
+      - "&fManually enter the exact"
+      - "&fnumber of blocks to buy."
       - ""
-      - "&b» &fClick to Set Amount"
+      - "&e♯ Click to Set Amount"
   info:
     slot: 13
     material: GOLDEN_SHOVEL
     display-name: "&#FFC427&lTOTAL QUOTE"
     lore:
       - ""
-      - " &7➟ &fQuantity: &e<amount> blocks"
-      - " &7➟ &fUnit Price: &a<unit_price>"
+      - " &e♯ &fQuantity: &e<amount> blocks"
+      - " &e♯ &fUnit Price: &a<unit_price>"
       - ""
-      - " &7➟ &fTotal Cost: &6<total>"
+      - " &e♯ Total Cost: &6<total>"
       - ""
   navigation:
     cancel:
@@ -116,17 +116,17 @@ gui:
       display-name: "&c&lCANCEL ORDER"
       lore:
         - ""
-        - "&7Discard this order and"
-        - "&7exit the shop."
+        - "&fDiscard this order and"
+        - "&fexit the shop."
         - ""
-        - "&c» &fClick to Cancel"
+        - "&e♯ Click to Cancel"
     confirm:
       slot: 32
       material: LIME_CANDLE
       display-name: "&a&lCONFIRM PURCHASE"
       lore:
         - ""
-        - "&7Finalize the purchase of"
-        - "&7your selected blocks."
+        - "&fFinalize the purchase of"
+        - "&fyour selected blocks."
         - ""
-        - " &c» &fClick to Confirm"
+        - "&e♯ Click to Confirm"

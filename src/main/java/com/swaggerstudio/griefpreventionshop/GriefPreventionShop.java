@@ -153,6 +153,7 @@ public class GriefPreventionShop extends JavaPlugin {
     }
 
     public void reloadPlugin() {
+        getLogger().info("Reloading GriefPreventionShop configs and menus...");
         configManager.reload();
         messageManager.reload();
         guiManager.reload();
@@ -161,5 +162,6 @@ public class GriefPreventionShop extends JavaPlugin {
         
         // Re-register commands in case aliases changed
         registerCommands();
+        getLogger().info("Reload complete! All modifications have been applied.");
     }
 }
