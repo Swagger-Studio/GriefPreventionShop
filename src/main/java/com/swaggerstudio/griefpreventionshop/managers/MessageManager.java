@@ -82,11 +82,30 @@ public class MessageManager {
         matcher.appendTail(sb);
         text = sb.toString();
 
-        // 2. Handle Legacy & -> § (Adventure handles § automatically if parsed correctly, 
-        // but MiniMessage doesn't. We'll use LegacyComponentSerializer to bridge if needed, 
-        // OR just rely on MiniMessage's ability to handle tags.)
-        
-        // A better approach for hybrid support:
-        return miniMessage.deserialize(text.replace("&", "§"));
+        // 2. Handle Legacy & -> MiniMessage tags
+        // This ensures compatibility with both standard & codes and modern tags.
+        text = text.replace("&0", "<black>")
+                   .replace("&1", "<dark_blue>")
+                   .replace("&2", "<dark_green>")
+                   .replace("&3", "<dark_aqua>")
+                   .replace("&4", "<dark_red>")
+                   .replace("&5", "<dark_purple>")
+                   .replace("&6", "<gold>")
+                   .replace("&7", "<gray>")
+                   .replace("&8", "<dark_gray>")
+                   .replace("&9", "<blue>")
+                   .replace("&a", "<green>")
+                   .replace("&b", "<aqua>")
+                   .replace("&c", "<red>")
+                   .replace("&d", "<light_purple>")
+                   .replace("&e", "<yellow>")
+                   .replace("&f", "<white>")
+                   .replace("&l", "<bold>")
+                   .replace("&m", "<strikethrough>")
+                   .replace("&n", "<underlined>")
+                   .replace("&o", "<italic>")
+                   .replace("&r", "<reset>");
+
+        return miniMessage.deserialize(text);
     }
 }
