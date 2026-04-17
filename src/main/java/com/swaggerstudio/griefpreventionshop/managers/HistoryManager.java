@@ -48,16 +48,19 @@ public class HistoryManager {
     }
 
     public void addEntry(Player player, int amount, double price) {
+        Connection conn = plugin.getDatabaseManager().getConnection();
+        if (conn == null) {
+            plugin.getLogger().warning("Could not log purchase: Database connection is not available.");
+            return;
+        }
+
         String sql = "INSERT INTO gpshop_history (player_uuid, timestamp, amount, price, world) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = plugin.getDatabaseManager().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, player.getUniqueId().toString());
             ps.setLong(2, System.currentTimeMillis());
             ps.setInt(3, amount);
             ps.setDouble(4, price);
             ps.setString(5, player.getWorld().getName());
-            
             ps.executeUpdate();
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to log purchase to database: " + e.getMessage());
@@ -69,6 +72,13 @@ public class HistoryManager {
         int size = menuConfig.getInt("gui.size", 54);
         Inventory inv = Bukkit.createInventory(new ShopHolder(), size, plugin.getMessageManager().parseColors(titleStr));
 
+        Connection conn = plugin.getDatabaseManager().getConnection();
+        if (conn == null) {
+            player.sendMessage(plugin.getMessageManager().parseColors("&cHistory database is currently unavailable."));
+            player.openInventory(inv);
+            return;
+        }
+
         String symbol = plugin.getConfigManager().getCurrencySymbol();
         String tz = plugin.getConfig().getString("history.timezone", "Asia/Kolkata");
         ZoneId zoneId = ZoneId.of(tz);
@@ -78,9 +88,7 @@ public class HistoryManager {
         Material mat = Material.valueOf(itemSec.getString("material", "PAPER"));
 
         String sql = "SELECT * FROM gpshop_history WHERE player_uuid = ? ORDER BY id DESC LIMIT ?";
-        try (Connection conn = plugin.getDatabaseManager().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, player.getUniqueId().toString());
             ps.setInt(2, size);
             

@@ -3,7 +3,6 @@ package com.swaggerstudio.griefpreventionshop.managers;
 import com.swaggerstudio.griefpreventionshop.GriefPreventionShop;
 import com.swaggerstudio.griefpreventionshop.utils.NumberUtil;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -88,14 +87,14 @@ public class WebhookManager {
                 if (obj instanceof java.util.Map) {
                     java.util.Map<?, ?> field = (java.util.Map<?, ?>) obj;
                     String name = String.valueOf(field.get("name") != null ? field.get("name") : "");
-                    String value = String.valueOf(field.get("value") != null ? field.get("value") : "")
+                    String value = stripColors(String.valueOf(field.get("value") != null ? field.get("value") : "")
                             .replace("<player>", player.getName())
                             .replace("<amount>", String.valueOf(amount))
                             .replace("<price>", formattedPrice)
                             .replace("<world>", loc.getWorld().getName())
                             .replace("<x>", String.valueOf(loc.getBlockX()))
                             .replace("<y>", String.valueOf(loc.getBlockY()))
-                            .replace("<z>", String.valueOf(loc.getBlockZ()));
+                            .replace("<z>", String.valueOf(loc.getBlockZ())));
                     boolean inline = true;
                     if (field.containsKey("inline")) {
                         inline = Boolean.parseBoolean(String.valueOf(field.get("inline")));
@@ -128,5 +127,11 @@ public class WebhookManager {
     private String escapeJson(String text) {
         if (text == null) return "";
         return text.replace("\"", "\\\"");
+    }
+
+    private String stripColors(String text) {
+        if (text == null) return "";
+        // Strips legacy & and section symbol color codes
+        return text.replaceAll("(?i)[&§][0-9a-fk-orx]", "");
     }
 }

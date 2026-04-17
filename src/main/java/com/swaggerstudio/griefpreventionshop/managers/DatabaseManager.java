@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class DatabaseManager {
 
@@ -23,19 +24,29 @@ public class DatabaseManager {
         String type = dbSec.getString("type", "H2").toUpperCase();
 
         try {
+            Properties props = new Properties();
             if (type.equals("MYSQL")) {
                 ConfigurationSection mysql = dbSec.getConfigurationSection("mysql");
                 String url = "jdbc:mysql://" + mysql.getString("host") + ":" + mysql.getInt("port") + "/" + mysql.getString("database");
-                connection = DriverManager.getConnection(url, mysql.getString("username"), mysql.getString("password"));
-                plugin.getLogger().info("Connected to MySQL database.");
+                props.setProperty("user", mysql.getString("username"));
+                props.setProperty("password", mysql.getString("password"));
+                
+                // Direct instantiation
+                connection = new com.mysql.cj.jdbc.Driver().connect(url, props);
+                plugin.getLogger().info("Connected to MySQL database using direct driver.");
             } else {
                 // Default to H2
                 String path = plugin.getDataFolder().getAbsolutePath() + "/history";
-                connection = DriverManager.getConnection("jdbc:h2:" + path + ";MODE=MySQL");
-                plugin.getLogger().info("Connected to H2 database.");
+                String url = "jdbc:h2:" + path + ";MODE=MySQL";
+                
+                // Direct instantiation
+                connection = new org.h2.Driver().connect(url, props);
+                plugin.getLogger().info("Connected to H2 database using direct driver.");
             }
 
-            createTable();
+            if (connection != null) {
+                createTable();
+            }
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to connect to database: " + e.getMessage());
         }

@@ -14,10 +14,10 @@ gui:
     display-name: "&#FFC427&lYOUR ACCOUNT"
     lore:
       - ""
-      - "&7User: &f<player>"
+      - "&#9D00FFStatistics"
       - ""
-      - " &e♯ &7Balance: &a<money>"
-      - " &e♯ &7Blocks: &e<blocks>"
+      - "&#63F68B$ &fBalance: &a<money>"
+      - "&#FF6C00⚑ &fClaim Blocks: &e<blocks>"
       - ""
   buttons:
     add:
@@ -28,10 +28,10 @@ gui:
         display-name: "&aAdd 50"
         lore:
           - ""
-          - "&7Increase your order by"
-          - "&7exactly &e50 &7blocks."
+          - "&fIncrease your order by"
+          - "&fexactly &e50 &fblocks."
           - ""
-          - "&e♯ Left-Click to Add"
+          - "&e♯ Click to Add"
       "16":
         amount: 100
         slot: 16
@@ -39,10 +39,10 @@ gui:
         display-name: "&aAdd 100"
         lore:
           - ""
-          - "&7Increase your order by"
-          - "&7exactly &e100 &7blocks."
+          - "&fIncrease your order by"
+          - "&fexactly &e100 &fblocks."
           - ""
-          - "&e♯ Left-Click to Add"
+          - "&e♯ Click to Add"
       "17":
         amount: 500
         slot: 17
@@ -50,10 +50,10 @@ gui:
         display-name: "&aAdd 500"
         lore:
           - ""
-          - "&7Increase your order by"
-          - "&7exactly &e500 &7blocks."
+          - "&fIncrease your order by"
+          - "&fexactly &e500 &fblocks."
           - ""
-          - "&e♯ Left-Click to Add"
+          - "&e♯ Click to Add"
     remove:
       "11":
         amount: 50
@@ -62,10 +62,10 @@ gui:
         display-name: "&cRemove 50"
         lore:
           - ""
-          - "&7Decrease your order by"
-          - "&7exactly &c50 &7blocks."
+          - "&fDecrease your order by"
+          - "&fexactly &c50 &fblocks."
           - ""
-          - "&e♯ Left-Click to Remove"
+          - "&e♯ Click to Remove"
       "10":
         amount: 100
         slot: 10
@@ -73,10 +73,10 @@ gui:
         display-name: "&cRemove 100"
         lore:
           - ""
-          - "&7Decrease your order by"
-          - "&7exactly &c100 &7blocks."
+          - "&fDecrease your order by"
+          - "&fexactly &c100 &fblocks."
           - ""
-          - "&e♯ Left-Click to Remove"
+          - "&e♯ Click to Remove"
       "9":
         amount: 500
         slot: 9
@@ -84,18 +84,18 @@ gui:
         display-name: "&cRemove 500"
         lore:
           - ""
-          - "&7Decrease your order by"
-          - "&7exactly &c500 &7blocks."
+          - "&fDecrease your order by"
+          - "&fexactly &c500 &fblocks."
           - ""
-          - "&e♯ Left-Click to Remove"
+          - "&e♯ Click to Remove"
   custom-input:
     slot: 31
     material: PAPER
     display-name: "&b&lCUSTOM QUANTITY"
     lore:
       - ""
-      - "&7Manually enter the exact"
-      - "&7number of blocks to buy."
+      - "&fManually enter the exact"
+      - "&fnumber of blocks to buy."
       - ""
       - "&e♯ Click to Set Amount"
   info:
@@ -116,8 +116,8 @@ gui:
       display-name: "&c&lCANCEL ORDER"
       lore:
         - ""
-        - "&7Discard this order and"
-        - "&7exit the shop."
+        - "&fDiscard this order and"
+        - "&fexit the shop."
         - ""
         - "&e♯ Click to Cancel"
     confirm:
@@ -126,7 +126,7 @@ gui:
       display-name: "&a&lCONFIRM PURCHASE"
       lore:
         - ""
-        - "&7Finalize the purchase of"
-        - "&7your selected blocks."
+        - "&fFinalize the purchase of"
+        - "&fyour selected blocks."
         - ""
         - "&e♯ Click to Confirm"

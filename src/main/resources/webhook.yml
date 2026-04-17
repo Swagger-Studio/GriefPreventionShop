@@ -8,11 +8,11 @@ enabled: false
 url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
 
 embed:
-  title: "📦 NEW SHOP PURCHASE"
+  title: "📦 NEW CLAIMSHOP PURCHASE"
   color: "#FFC427"
   # Thumbnail settings (Right side avatar)
   thumbnail: true
-  
+
   fields:
     - name: "👤 Player"
       value: "<player>"

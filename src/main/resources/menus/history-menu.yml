@@ -2,19 +2,19 @@
 # CLAIM SHOP CONFIGURATION - HISTORY
 # ==========================================================
 gui:
-  title: "&#FFC427&lCLAIM SHOP &e♯ &7History"
+  title: "&0Claimshop | History"
   size: 54
 
   # The item template used for each transaction entry
   item:
     material: PAPER
-    display-name: "&6&l#<id> &e♯ &fTransaction"
+    display-name: "&6#<id> &7| &fTransaction"
     lore:
       - "&8<date>"
       - ""
-      - " &e♯ &7Quantity: &f<amount> blocks"
-      - " &e♯ &7Total Cost: &a<price>"
+      - "&e♯ &fQuantity: &e<amount> blocks"
+      - "&e♯ &fTotal Cost: &a<price>"
       - ""
-      - "&7Location: &7<world>"
+      - "&eLocation: &7<world>"
       - ""
       - "&e♯ Purchase Recorded"
