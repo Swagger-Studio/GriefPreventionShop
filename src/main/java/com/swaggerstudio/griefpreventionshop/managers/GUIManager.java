@@ -138,7 +138,22 @@ public class GUIManager {
                     .map(line -> plugin.getMessageManager().parseColors(line))
                     .collect(Collectors.toList()));
             
-            meta.addItemFlags(ItemFlag.values());
+            // 1. Apply all available flags
+            for (org.bukkit.inventory.ItemFlag flag : org.bukkit.inventory.ItemFlag.values()) {
+                meta.addItemFlags(flag);
+            }
+
+            // 2. Try to apply 1.20.5+ flags
+            try {
+                meta.addItemFlags(org.bukkit.inventory.ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP"));
+                meta.addItemFlags(org.bukkit.inventory.ItemFlag.valueOf("HIDE_STORED_ENCHANTS"));
+            } catch (Exception ignored) {}
+
+            // 3. Clear attribute modifiers
+            try {
+                meta.setAttributeModifiers(com.google.common.collect.HashMultimap.create());
+            } catch (Exception ignored) {}
+
             item.setItemMeta(meta);
         }
         return item;
