@@ -120,7 +120,7 @@ public class HistoryManager {
                                 .replace("<world>", world)));
                     }
                     meta.lore(lore);
-                    meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                    meta.addItemFlags(ItemFlag.values());
                     item.setItemMeta(meta);
                 }
                 inv.setItem(slot++, item);

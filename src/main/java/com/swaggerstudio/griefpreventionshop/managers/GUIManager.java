@@ -138,7 +138,7 @@ public class GUIManager {
                     .map(line -> plugin.getMessageManager().parseColors(line))
                     .collect(Collectors.toList()));
             
-            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON, ItemFlag.HIDE_POTION_EFFECTS);
+            meta.addItemFlags(ItemFlag.values());
             item.setItemMeta(meta);
         }
         return item;
