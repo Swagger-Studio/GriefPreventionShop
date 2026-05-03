@@ -12,7 +12,6 @@ public class ClaimManager {
 
     public void addClaimBlocks(Player player, int amount) {
         PlayerData playerData = GriefPrevention.instance.dataStore.getPlayerData(player.getUniqueId());
-        playerData.setAccruedClaimBlocks(playerData.getAccruedClaimBlocks() + amount);
         
         int currentBonus = playerData.getBonusClaimBlocks();
         playerData.setBonusClaimBlocks(currentBonus + amount);
