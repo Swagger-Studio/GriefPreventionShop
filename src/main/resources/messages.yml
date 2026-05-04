@@ -83,4 +83,4 @@ messages:
     reloaded:
       enabled: true
       type: "chat"
-      message: "&#FFC427&lCLAIM SHOP &7➟ &fConfigs and GUI re-initialized."
+      message: "&#FFC427&lCLAIM SHOP &7➟ &aConfig reloaded"

@@ -21,34 +21,35 @@ public class GriefPreventionShop extends JavaPlugin {
     private WebhookManager webhookManager;
     private DatabaseManager databaseManager;
     private ChatInputListener chatInputListener;
+    private CurrencyManager currencyManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
-        // 1. Initialize Managers (Early ones for banner usage)
+        // 1. Initialize Early Managers
         this.logManager = new LogManager(this);
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
+        this.currencyManager = new CurrencyManager(this);
 
-        // 2. Professional Startup Banner
-        sendStartupBanner();
-
-        // 3. Initial Dependency Check
+        // 2. Initial Dependency Check
         if (!checkDependencies()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        // 4. Initialize Remaining Managers
+        // 3. Initialize Remaining Managers (Economy needed for banner)
         this.economyManager = new EconomyManager(this);
         this.claimManager = new ClaimManager(this);
-        this.logManager = new LogManager(this);
         this.historyManager = new HistoryManager(this);
         this.webhookManager = new WebhookManager(this);
         this.databaseManager = new DatabaseManager(this);
-        this.guiManager = new GUIManager(this); // GUIManager.reload() needs History/Webhook
+        this.guiManager = new GUIManager(this);
         this.chatInputListener = new ChatInputListener(this);
+
+        // 4. Professional Startup Banner
+        sendStartupBanner();
 
         // 5. Register Commands & Listeners
         registerCommands();
@@ -63,44 +64,58 @@ public class GriefPreventionShop extends JavaPlugin {
 
     private void sendStartupBanner() {
         String version = getDescription().getVersion();
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(""));
+        Bukkit.getConsoleSender().sendMessage("");
         Bukkit.getConsoleSender().sendMessage(
-                messageManager.parseColors(" &#FFC427&l╔═════════════════════════════════════════════════╗"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
-                " &#FFC427&l║  &f&lGriefPreventionShop &8- &7v" + version + "                   &#FFC427&l║"));
+                messageManager.parseColors(" &#FFC427&l╔═══════════════════════════════════════════════════╗"));
+        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &f&lGriefPreventionShop &8- &7v"
+                + String.format("%-10s", version) + "                &#FFC427&l║"));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &7Premium Claim Shop Addon by SwaggerStudio      &#FFC427&l║"));
+                .parseColors(" &#FFC427&l║  &7Premium Claim Shop Addon by SwaggerStudio        &#FFC427&l║"));
         Bukkit.getConsoleSender().sendMessage(
-                messageManager.parseColors(" &#FFC427&l╠═════════════════════════════════════════════════╣"));
+                messageManager.parseColors(" &#FFC427&l╠═══════════════════════════════════════════════════╣"));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &fStatus: &a&lONLINE                                 &#FFC427&l║"));
+                .parseColors(" &#FFC427&l║  &fStatus: &a&lONLINE                                   &#FFC427&l║"));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb&r           &#FFC427&l║"));
+                .parseColors(" &#FFC427&l║  &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb&r             &#FFC427&l║"));
         Bukkit.getConsoleSender().sendMessage(
-                messageManager.parseColors(" &#FFC427&l╚═════════════════════════════════════════════════╝"));
-        Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(""));
+                messageManager.parseColors(" &#FFC427&l╚═══════════════════════════════════════════════════╝"));
+        Bukkit.getConsoleSender().sendMessage("");
     }
 
     private boolean checkDependencies() {
         boolean gp = Bukkit.getPluginManager().getPlugin("GriefPrevention") != null;
-        boolean vault = Bukkit.getPluginManager().getPlugin("Vault") != null;
+        String active = getCurrencyManager().getActiveCurrency();
+        boolean econPresent = true;
+        String missingEcon = "";
 
-        if (!gp || !vault) {
+        if (active.equals("Vault") && Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            econPresent = false;
+            missingEcon = "Vault";
+        } else if (active.equals("PlayerPoints") && Bukkit.getPluginManager().getPlugin("PlayerPoints") == null) {
+            econPresent = false;
+            missingEcon = "PlayerPoints";
+        } else if (active.equals("ExcellentEconomy") &&
+                Bukkit.getPluginManager().getPlugin("ExcellentEconomy") == null &&
+                Bukkit.getPluginManager().getPlugin("CoinsEngine") == null) {
+            econPresent = false;
+            missingEcon = "ExcellentEconomy (or CoinsEngine)";
+        }
+
+        if (!gp || !econPresent) {
             Bukkit.getConsoleSender()
                     .sendMessage(messageManager.parseColors(" &#FFC427&l║  &c&lCRITICAL ERROR: MISSING DEPENDENCIES"));
             if (!gp)
                 Bukkit.getConsoleSender()
                         .sendMessage(messageManager.parseColors(" &#FFC427&l║  &e♯ &fGriefPrevention: &cNOT FOUND"));
-            if (!vault)
-                Bukkit.getConsoleSender()
-                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &e♯ &fVault: &cNOT FOUND"));
+            if (!econPresent)
+                Bukkit.getConsoleSender().sendMessage(messageManager
+                        .parseColors(" &#FFC427&l║  &e♯ &f" + missingEcon + ": &cNOT FOUND (Active Currency)"));
             return false;
         }
         return true;
     }
 
     private void registerCommands() {
-        // We will register commands dynamically based on config aliases
         configManager.registerCommands();
     }
 
@@ -161,14 +176,27 @@ public class GriefPreventionShop extends JavaPlugin {
         return databaseManager;
     }
 
+    public CurrencyManager getCurrencyManager() {
+        return currencyManager;
+    }
+
     public void reloadPlugin() {
         getLogger().info("Reloading GriefPreventionShop configs and menus...");
         configManager.reload();
         messageManager.reload();
-        guiManager.reload();
         historyManager.reload();
         webhookManager.reload();
-        
+        currencyManager.reload();
+
+        // Re-initialize economy manager to refresh hooks
+        this.economyManager = new EconomyManager(this);
+
+        // Re-initialize GUI manager
+        this.guiManager = new GUIManager(this);
+
+        // Send banner again for visual confirmation of hooks
+        sendStartupBanner();
+
         // Re-register commands in case aliases changed
         registerCommands();
         getLogger().info("Reload complete! All modifications have been applied.");

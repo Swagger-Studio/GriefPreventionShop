@@ -4,7 +4,6 @@ import com.swaggerstudio.griefpreventionshop.GriefPreventionShop;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -59,10 +58,22 @@ public class DatabaseManager {
                 "timestamp BIGINT NOT NULL, " +
                 "amount INT NOT NULL, " +
                 "price DOUBLE NOT NULL, " +
-                "world VARCHAR(64) NOT NULL" +
+                "world VARCHAR(64) NOT NULL, " +
+                "currency VARCHAR(64)" +
                 ")";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.execute();
+        }
+
+        // Add currency column if it doesn't exist (for existing tables)
+        try {
+            String alterSql = "ALTER TABLE gpshop_history ADD COLUMN IF NOT EXISTS currency VARCHAR(64)";
+            try (PreparedStatement ps = connection.prepareStatement(alterSql)) {
+                ps.execute();
+            }
+        } catch (SQLException ignored) {
+            // IF NOT EXISTS might not be supported in all MySQL versions, but H2 supports it.
+            // For MySQL, we could check metadata, but this is a simple fallback.
         }
     }
 

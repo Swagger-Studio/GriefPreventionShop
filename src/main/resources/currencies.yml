@@ -1,0 +1,27 @@
+# ==========================================================
+# CURRENCY CONFIGURATION
+# ==========================================================
+
+# Active currency used in the shop.
+# Supported: Vault, PlayerPoints, ExcellentEconomy, Experience
+active-currency: "Vault"
+
+currencies:
+  Vault:
+    register: true
+    raw: "&eMoney"
+
+  PlayerPoints:
+    register: true
+    raw: "&ePoints"
+
+  # CoinsEngine Plugin Now ExcellentEconomy
+
+  ExcellentEconomy:
+    register: true
+    currency-id: "coins"
+    raw: "&eCoins"
+
+  Experience:
+    register: true
+    raw: "&eXP"

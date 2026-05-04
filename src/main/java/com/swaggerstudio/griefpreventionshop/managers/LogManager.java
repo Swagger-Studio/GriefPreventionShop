@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.CompletableFuture;
 
 public class LogManager {
@@ -22,15 +23,24 @@ public class LogManager {
         }
     }
 
-    public void logPurchase(String playerName, int amount, double price, String world) {
+    public void logPurchase(String playerName, int amount, double price, String world, String currency) {
         if (!plugin.getConfig().getBoolean("logging.enabled", true)) return;
 
         CompletableFuture.runAsync(() -> {
-            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            String tz = plugin.getConfig().getString("history.timezone", "Asia/Kolkata");
+            
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            dateFormat.setTimeZone(TimeZone.getTimeZone(tz));
+            String date = dateFormat.format(new Date());
+            
             File logFile = new File(logsFolder, date + ".txt");
-            String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
-            String entry = String.format("[%s] PLAYER: %s | BLOCKS: %d | PRICE: %.2f | WORLD: %s\n",
-                    time, playerName, amount, price, world);
+            
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            timeFormat.setTimeZone(TimeZone.getTimeZone(tz));
+            String time = timeFormat.format(new Date());
+            
+            String entry = String.format("[%s] PLAYER: %s | BLOCKS: %d | PRICE: %.2f | CURRENCY: %s | WORLD: %s\n",
+                    time, playerName, amount, price, currency, world);
 
             try (FileWriter fw = new FileWriter(logFile, true)) {
                 fw.write(entry);

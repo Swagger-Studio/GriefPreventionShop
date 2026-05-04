@@ -14,6 +14,7 @@ gui:
       - ""
       - "&e♯ &fQuantity: &e<amount> blocks"
       - "&e♯ &fTotal Cost: &a<price>"
+      - "&e♯ &fCurrency: &7<currency>"
       - ""
       - "&eLocation: &7<world>"
       - ""

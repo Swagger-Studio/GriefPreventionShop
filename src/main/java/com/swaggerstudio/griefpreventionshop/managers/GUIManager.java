@@ -162,17 +162,24 @@ public class GUIManager {
     private String replacePlaceholders(String text, int amount, Player player) {
         double unitPrice = plugin.getConfigManager().getPricePerBlock();
         double total = Math.abs(amount) * unitPrice;
-        String symbol = plugin.getConfigManager().getCurrencySymbol();
+        
+        String active = plugin.getCurrencyManager().getActiveCurrency();
+        String guiFormat = plugin.getCurrencyManager().getDisplayGui(active);
+        
+        String unitPriceFormatted = guiFormat.replace("%price%", NumberUtil.formatCurrency(unitPrice, ""));
+        String totalFormatted = guiFormat.replace("%price%", NumberUtil.formatCurrency(total, ""));
         
         String result = text.replace("<amount>", String.valueOf(amount))
-                   .replace("<unit_price>", NumberUtil.formatCurrency(unitPrice, symbol))
-                   .replace("<total>", NumberUtil.formatCurrency(total, symbol));
+                   .replace("<unit_price>", unitPriceFormatted)
+                   .replace("<total>", totalFormatted);
 
         if (player != null) {
             double balance = plugin.getEconomyManager().getBalance(player);
             int blocks = plugin.getClaimManager().getClaimBlocks(player);
+            String balanceFormatted = guiFormat.replace("%price%", NumberUtil.formatCurrency(balance, ""));
+            
             result = result.replace("<player>", player.getName())
-                           .replace("<money>", NumberUtil.formatCurrency(balance, symbol))
+                           .replace("<money>", balanceFormatted)
                            .replace("<blocks>", String.valueOf(blocks));
         }
         
@@ -251,21 +258,24 @@ public class GUIManager {
     private void processPurchase(Player player, int amount) {
         double pricePerBlock = plugin.getConfigManager().getPricePerBlock();
         double totalPrice = amount * pricePerBlock;
-        String symbol = plugin.getConfigManager().getCurrencySymbol();
+        
+        String active = plugin.getCurrencyManager().getActiveCurrency();
+        String guiFormat = plugin.getCurrencyManager().getDisplayGui(active);
+        String totalPriceFormatted = guiFormat.replace("%price%", NumberUtil.formatCurrency(totalPrice, ""));
 
         if (!plugin.getEconomyManager().hasBalance(player, totalPrice)) {
             plugin.getMessageManager().playSound(player, "insufficient-funds");
-            plugin.getMessageManager().sendMessage(player, "error.not-enough-money", "<price>", NumberUtil.formatCurrency(totalPrice, symbol));
+            plugin.getMessageManager().sendMessage(player, "error.not-enough-money", "<price>", totalPriceFormatted);
             return;
         }
 
         if (plugin.getEconomyManager().withdraw(player, totalPrice)) {
             plugin.getClaimManager().addClaimBlocks(player, amount);
-            plugin.getLogManager().logPurchase(player.getName(), amount, totalPrice, player.getWorld().getName());
-            plugin.getHistoryManager().addEntry(player, amount, totalPrice);
+            plugin.getLogManager().logPurchase(player.getName(), amount, totalPrice, player.getWorld().getName(), active);
+            plugin.getHistoryManager().addEntry(player, amount, totalPrice, active);
             plugin.getWebhookManager().sendPurchaseNotification(player, amount, totalPrice);
             plugin.getMessageManager().playSound(player, "purchase");
-            plugin.getMessageManager().sendMessage(player, "shop.purchase-success", "<amount>", String.valueOf(amount), "<price>", NumberUtil.formatCurrency(totalPrice, symbol));
+            plugin.getMessageManager().sendMessage(player, "shop.purchase-success", "<amount>", String.valueOf(amount), "<price>", totalPriceFormatted);
         } else {
             plugin.getMessageManager().sendMessage(player, "error.transaction-failed");
         }

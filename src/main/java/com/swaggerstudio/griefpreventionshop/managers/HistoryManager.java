@@ -47,20 +47,21 @@ public class HistoryManager {
         menuConfig = YamlConfiguration.loadConfiguration(menuFile);
     }
 
-    public void addEntry(Player player, int amount, double price) {
+    public void addEntry(Player player, int amount, double price, String currency) {
         Connection conn = plugin.getDatabaseManager().getConnection();
         if (conn == null) {
             plugin.getLogger().warning("Could not log purchase: Database connection is not available.");
             return;
         }
 
-        String sql = "INSERT INTO gpshop_history (player_uuid, timestamp, amount, price, world) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO gpshop_history (player_uuid, timestamp, amount, price, world, currency) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, player.getUniqueId().toString());
             ps.setLong(2, System.currentTimeMillis());
             ps.setInt(3, amount);
             ps.setDouble(4, price);
             ps.setString(5, player.getWorld().getName());
+            ps.setString(6, currency);
             ps.executeUpdate();
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to log purchase to database: " + e.getMessage());
@@ -112,12 +113,16 @@ public class HistoryManager {
                     meta.displayName(plugin.getMessageManager().parseColors(name));
 
                     List<Component> lore = new ArrayList<>();
+                    String currency = rs.getString("currency");
+                    if (currency == null) currency = "Unknown";
+
                     for (String line : itemSec.getStringList("lore")) {
                         lore.add(plugin.getMessageManager().parseColors(line
                                 .replace("<date>", formattedDate)
                                 .replace("<amount>", String.valueOf(amount))
                                 .replace("<price>", NumberUtil.formatCurrency(price, symbol))
-                                .replace("<world>", world)));
+                                .replace("<world>", world)
+                                .replace("<currency>", currency)));
                     }
                     meta.lore(lore);
                     // 1. Apply all available flags
