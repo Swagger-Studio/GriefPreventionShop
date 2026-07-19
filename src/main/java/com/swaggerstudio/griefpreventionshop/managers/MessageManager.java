@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,11 +113,15 @@ public class MessageManager {
         float volume = (float) section.getDouble("volume", 1.0);
         float pitch = (float) section.getDouble("pitch", 1.0);
 
-        try {
-            player.playSound(player.getLocation(), org.bukkit.Sound.valueOf(soundName), volume, pitch);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid sound name in config: " + soundName);
-        }
+        // Play by sound key via the stable String overload — works across 1.18 → 26.1.2 and
+        // avoids org.bukkit.Sound#valueOf, which is registry-backed and marked for removal on
+        // modern Paper. Enum-style config values (ENTITY_PLAYER_LEVELUP) are converted to the
+        // namespaced key form (entity.player.levelup); key/namespaced values are passed through,
+        // which also enables resource-pack custom sounds.
+        String soundKey = (soundName.indexOf(':') >= 0 || soundName.indexOf('.') >= 0)
+                ? soundName
+                : soundName.toLowerCase(Locale.ROOT).replace('_', '.');
+        player.playSound(player.getLocation(), soundKey, volume, pitch);
     }
 
     public Component parseColors(String text) {

@@ -1,16 +1,14 @@
 package com.swaggerstudio.griefpreventionshop.managers;
 
 import com.swaggerstudio.griefpreventionshop.GriefPreventionShop;
+import com.swaggerstudio.griefpreventionshop.utils.SchedulerUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
 import java.util.UUID;
@@ -20,7 +18,7 @@ public class ChatInputListener implements Listener {
 
     private final GriefPreventionShop plugin;
     private final Map<UUID, Long> activeSessions = new ConcurrentHashMap<>();
-    private final Map<UUID, BukkitTask> countdownTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, SchedulerUtil.Task> countdownTasks = new ConcurrentHashMap<>();
     private final long TIMEOUT_MS = 30000; // 30 seconds
 
     public ChatInputListener(GriefPreventionShop plugin) {
@@ -30,9 +28,9 @@ public class ChatInputListener implements Listener {
     public void startSession(Player player) {
         UUID uuid = player.getUniqueId();
         activeSessions.put(uuid, System.currentTimeMillis());
-        
-        // Start live countdown visual
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+
+        // Start live countdown visual (Folia-safe: tied to the player's region scheduler).
+        SchedulerUtil.Task task = SchedulerUtil.runAtFixedRate(plugin, player, () -> {
             Long startTime = activeSessions.get(uuid);
             if (startTime == null) {
                 cancelTask(uuid);
@@ -50,13 +48,16 @@ public class ChatInputListener implements Listener {
             }
 
             plugin.getMessageManager().sendMessage(player, "shop.enter-amount", "<seconds>", String.valueOf(remaining));
-        }, 0L, 20L); // Every second
+        }, () -> { // retired: fires if the player logs out / is removed on Folia
+            activeSessions.remove(uuid);
+            countdownTasks.remove(uuid);
+        }, 1L, 20L); // Every second
 
         countdownTasks.put(uuid, task);
     }
 
     private void cancelTask(UUID uuid) {
-        BukkitTask task = countdownTasks.remove(uuid);
+        SchedulerUtil.Task task = countdownTasks.remove(uuid);
         if (task != null) task.cancel();
     }
 
@@ -95,8 +96,8 @@ public class ChatInputListener implements Listener {
                 return;
             }
 
-            // Return to GUI with the new amount
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            // Return to GUI with the new amount (Folia-safe: runs on the player's region thread).
+            SchedulerUtil.runForEntity(plugin, player, () -> {
                 plugin.getGuiManager().setAmount(player, amount);
                 plugin.getMessageManager().sendMessage(player, "shop.amount-set", "<amount>", String.valueOf(amount));
             });

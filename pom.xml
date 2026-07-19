@@ -6,7 +6,7 @@
 
     <groupId>com.swaggerstudio</groupId>
     <artifactId>GriefPreventionShop</artifactId>
-    <version>1.1</version>
+    <version>2.1</version>
     <packaging>jar</packaging>
 
     <name>GriefPreventionShop</name>
@@ -81,10 +81,16 @@
     </repositories>
 
     <dependencies>
+        <!--
+          Compile against the latest server API (Minecraft 26.1.2, Paper build #70) so the
+          plugin is verified against current APIs and uses no outdated/removed methods.
+          The produced bytecode stays Java 21 (see java.version) so it still loads on older
+          servers down to 1.18, while running natively on Paper/Purpur/Folia 26.1.2 (JDK 25).
+        -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>26.1.2.build.70-stable</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

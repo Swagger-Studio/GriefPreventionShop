@@ -1,6 +1,8 @@
 package com.swaggerstudio.griefpreventionshop;
 
 import com.swaggerstudio.griefpreventionshop.managers.*;
+import com.swaggerstudio.griefpreventionshop.provider.ClaimProviderFactory;
+import com.swaggerstudio.griefpreventionshop.utils.SchedulerUtil;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -27,35 +29,40 @@ public class GriefPreventionShop extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        // 1. Initialize Early Managers
+        // 1. Initialize Core Managers
         this.logManager = new LogManager(this);
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
         this.currencyManager = new CurrencyManager(this);
 
-        // 2. Initial Dependency Check
+        // Initialize claim and economy managers early to detect hooks
+        this.economyManager = new EconomyManager(this);
+        this.claimManager = new ClaimManager(this);
+
+        // 2. Log Hook Statuses
+        logHookStatuses();
+
+        // 3. Initial Dependency Check
         if (!checkDependencies()) {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
 
-        // 3. Initialize Remaining Managers (Economy needed for banner)
-        this.economyManager = new EconomyManager(this);
-        this.claimManager = new ClaimManager(this);
+        // 4. Initialize Remaining Managers
         this.historyManager = new HistoryManager(this);
         this.webhookManager = new WebhookManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.guiManager = new GUIManager(this);
         this.chatInputListener = new ChatInputListener(this);
 
-        // 4. Professional Startup Banner
+        // 5. Professional Startup Banner
         sendStartupBanner();
 
-        // 5. Register Commands & Listeners
+        // 6. Register Commands & Listeners
         registerCommands();
         registerListeners();
 
-        // 6. Initialize bStats
+        // 7. Initialize bStats
         int pluginId = 30792;
         Metrics metrics = new Metrics(this, pluginId);
         metrics.addCustomChart(
@@ -64,6 +71,10 @@ public class GriefPreventionShop extends JavaPlugin {
 
     private void sendStartupBanner() {
         String version = getDescription().getVersion();
+        String provider = claimManager != null ? claimManager.getProviderName() : "None";
+        String software = Bukkit.getName();
+        String folia = SchedulerUtil.isFolia() ? "&aYes &7(region-threaded)" : "&7No";
+
         Bukkit.getConsoleSender().sendMessage("");
         Bukkit.getConsoleSender().sendMessage(
                 messageManager.parseColors(" &#FFC427&l╔═══════════════════════════════════════════════════╗"));
@@ -74,45 +85,68 @@ public class GriefPreventionShop extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(
                 messageManager.parseColors(" &#FFC427&l╠═══════════════════════════════════════════════════╣"));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &fStatus: &a&lONLINE                                   &#FFC427&l║"));
+                .parseColors(" &#FFC427&l║  &fStatus: &a&lONLINE"));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb&r             &#FFC427&l║"));
+                .parseColors(" &#FFC427&l║  &fProvider: &e" + provider));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &fServer: &e" + software));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &fFolia: " + folia));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &fWebsite: &e&nhttps://swaggers.studio/"));
+        Bukkit.getConsoleSender().sendMessage(messageManager
+                .parseColors(" &#FFC427&l║  &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb"));
         Bukkit.getConsoleSender().sendMessage(
                 messageManager.parseColors(" &#FFC427&l╚═══════════════════════════════════════════════════╝"));
         Bukkit.getConsoleSender().sendMessage("");
     }
 
     private boolean checkDependencies() {
-        boolean gp = Bukkit.getPluginManager().getPlugin("GriefPrevention") != null;
-        String active = getCurrencyManager().getActiveCurrency();
-        boolean econPresent = true;
-        String missingEcon = "";
+        boolean gp = claimManager != null && claimManager.isReady();
+        boolean econ = economyManager != null && economyManager.isHooked();
 
-        if (active.equals("Vault") && Bukkit.getPluginManager().getPlugin("Vault") == null) {
-            econPresent = false;
-            missingEcon = "Vault";
-        } else if (active.equals("PlayerPoints") && Bukkit.getPluginManager().getPlugin("PlayerPoints") == null) {
-            econPresent = false;
-            missingEcon = "PlayerPoints";
-        } else if (active.equals("ExcellentEconomy") &&
-                Bukkit.getPluginManager().getPlugin("ExcellentEconomy") == null &&
-                Bukkit.getPluginManager().getPlugin("CoinsEngine") == null) {
-            econPresent = false;
-            missingEcon = "ExcellentEconomy (or CoinsEngine)";
-        }
-
-        if (!gp || !econPresent) {
-            Bukkit.getConsoleSender()
-                    .sendMessage(messageManager.parseColors(" &#FFC427&l║  &c&lCRITICAL ERROR: MISSING DEPENDENCIES"));
-            if (!gp)
-                Bukkit.getConsoleSender()
-                        .sendMessage(messageManager.parseColors(" &#FFC427&l║  &e♯ &fGriefPrevention: &cNOT FOUND"));
-            if (!econPresent)
-                Bukkit.getConsoleSender().sendMessage(messageManager
-                        .parseColors(" &#FFC427&l║  &e♯ &f" + missingEcon + ": &cNOT FOUND (Active Currency)"));
+        if (!gp || !econ) {
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &c&lCRITICAL ERROR: MISSING DEPENDENCIES"));
+            if (!gp) {
+                Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                        " &#FFC427&l║  &e♯ &fGriefPrevention / GriefPrevention3D: &cNEITHER FOUND"));
+            }
+            if (!econ) {
+                String missingEcon = getCurrencyManager().getActiveCurrency();
+                Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                        " &#FFC427&l║  &e♯ &f" + missingEcon + ": &cNOT FOUND (Active Currency)"));
+            }
             return false;
         }
         return true;
+    }
+
+    private void logHookStatuses() {
+        String activeEcon = getCurrencyManager().getActiveCurrency();
+        boolean econHooked = economyManager != null && economyManager.isHooked();
+        
+        // Claim Provider Hook Status
+        String claimProvider = claimManager != null ? claimManager.getProviderName() : "None";
+        if (claimManager != null && claimManager.isReady() && !claimProvider.equals("None")) {
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&a✔ &fClaim Provider: &a" + claimProvider));
+        } else {
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&c✘ &fClaim Provider: &cNone"));
+        }
+
+        // Economy Provider Hook Status
+        if (econHooked) {
+            String displayedEcon = economyManager.getProviderName();
+            if (activeEcon.equals("ExcellentEconomy") && !displayedEcon.equals("ExcellentEconomy")) {
+                displayedEcon = "ExcellentEconomy (CoinsEngine fallback)";
+            }
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&a✔ &fEconomy Provider: &a" + displayedEcon));
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&a✔ &fHook Status: &aSuccessfully Hooked"));
+        } else {
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&c✘ &fEconomy Provider: &c" + activeEcon));
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&c✘ &fHook Status: &cFailed"));
+            String reason = economyManager != null ? economyManager.getFailureReason() : "Economy provider could not be initialized.";
+            Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&7Reason: " + reason));
+        }
     }
 
     private void registerCommands() {
@@ -190,6 +224,9 @@ public class GriefPreventionShop extends JavaPlugin {
 
         // Re-initialize economy manager to refresh hooks
         this.economyManager = new EconomyManager(this);
+
+        // Log hook statuses on reload
+        logHookStatuses();
 
         // Re-initialize GUI manager
         this.guiManager = new GUIManager(this);

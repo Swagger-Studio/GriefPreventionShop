@@ -1,8 +1,13 @@
 # 💎 GriefPreventionShop
 
-Hey there! Welcome to **GriefPreventionShop**, a premium-grade addon for the GriefPrevention plugin. I created this to give server owners a super clean, high-performance way for players to buy claim blocks without messy chat commands.
+Hey there! Welcome to **GriefPreventionShop**, a premium-grade addon for the GriefPrevention family of plugins. I created this to give server owners a super clean, high-performance way for players to buy claim blocks without messy chat commands.
 
 This plugin isn't just a basic menu; it’s built to feel like a "Classic Studio" professional client, with smooth interactions and a centered GUI design that keeps the focus where it matters.
+
+### 🌍 Compatibility
+- **Claim plugins**: Auto-detects and supports both **GriefPrevention** and **GriefPrevention3D**. GriefPrevention3D takes priority when both are present, enabling Folia-compatible claim block purchasing.
+- **Server software**: Runs identically on **Paper, Purpur, Spigot, and Folia**. On Folia, all claim-block writes and player interactions use Folia-safe region schedulers automatically.
+- **Minecraft versions**: Compiled and verified against the latest server API — **Minecraft 26.1.2** (Paper/Purpur/Folia build #70, JDK 25) — and uses no deprecated-for-removal APIs. Bytecode targets Java 21, so it also keeps backward compatibility down to **1.18+**.
 
 ### 🚀 Awesome Features:
 - **Premium GUI Design**: Forget generic emerald blocks. We use Lime/Red Shulker Boxes and Candles for a much sleeker visual experience.
@@ -22,7 +27,7 @@ This plugin isn't just a basic menu; it’s built to feel like a "Classic Studio
 
 ### ⚙️ Quick Setup:
 1. Drop the jar in your plugins folder.
-2. Make sure you have **Vault** and **GriefPrevention** (obviously!).
+2. Make sure you have **Vault** and either **GriefPrevention** or **GriefPrevention3D** (use GriefPrevention3D on Folia!).
 3. Adjust your `price-per-block` and `currency-symbol` in `config.yml`.
 4. (Optional) Put your Discord Webhook URL in `webhook.yml` to get those sweet notifications.
 

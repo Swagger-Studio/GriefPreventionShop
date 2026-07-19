@@ -1,11 +1,22 @@
 name: GriefPreventionShop
-version: 1.1
+version: 2.1.1
 main: com.swaggerstudio.griefpreventionshop.GriefPreventionShop
 api-version: 1.18
-depend: [GriefPrevention]
-softdepend: [Vault, PlayerPoints, ExcellentEconomy, CoinsEngine]
+folia-supported: true
+# Either GriefPrevention or GriefPrevention3D may provide claims; both are soft dependencies
+# so the plugin can load on a server that has only one of them installed.
+depend: []
+softdepend:
+  [
+    GriefPrevention,
+    GriefPrevention3D,
+    Vault,
+    PlayerPoints,
+    ExcellentEconomy,
+    CoinsEngine,
+  ]
 author: SwaggerStudio
-description: Purchase claim blocks with a GUI economy shop.
+description: Purchase claim blocks with a GUI economy shop. Supports GriefPrevention & GriefPrevention3D (Folia-ready).
 website: https://swaggers.studio/
 
 commands:
