@@ -18,8 +18,51 @@ public class EconomyManager {
     private void setupProvider() {
         String active = plugin.getCurrencyManager().getActiveCurrency();
         
+        if (active.equalsIgnoreCase("auto")) {
+            // 1. Try Vault / VaultUnlocked if an economy provider is registered
+            VaultProvider vp = new VaultProvider(plugin);
+            if (vp.isHooked()) {
+                this.provider = vp;
+                return;
+            }
+
+            // 2. Try PlayerPoints
+            if (Bukkit.getPluginManager().getPlugin("PlayerPoints") != null) {
+                PlayerPointsProvider pp = new PlayerPointsProvider(plugin);
+                if (pp.isHooked()) {
+                    this.provider = pp;
+                    return;
+                }
+            }
+
+            // 3. Try ExcellentEconomy / CoinsEngine
+            if (Bukkit.getPluginManager().getPlugin("ExcellentEconomy") != null) {
+                try {
+                    EconomyProvider ee = (EconomyProvider) Class.forName("com.swaggerstudio.griefpreventionshop.economy.ExcellentEconomyProvider")
+                            .getConstructor(GriefPreventionShop.class)
+                            .newInstance(plugin);
+                    if (ee.isHooked()) {
+                        this.provider = ee;
+                        return;
+                    }
+                } catch (Throwable ignored) {}
+            }
+            if (Bukkit.getPluginManager().getPlugin("CoinsEngine") != null) {
+                LegacyCoinsEngineProvider ce = new LegacyCoinsEngineProvider(plugin);
+                if (ce.isHooked()) {
+                    this.provider = ce;
+                    return;
+                }
+            }
+
+            // 4. Default fallback to Experience (Vanilla XP)
+            this.provider = new ExperienceProvider(plugin);
+            return;
+        }
+
         switch (active) {
             case "Vault":
+            case "VaultUnlocked":
                 this.provider = new VaultProvider(plugin);
                 break;
             case "PlayerPoints":

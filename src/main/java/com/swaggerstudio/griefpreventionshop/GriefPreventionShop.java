@@ -81,7 +81,7 @@ public class GriefPreventionShop extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(" &#FFC427&l║  &f&lGriefPreventionShop &8- &7v"
                 + String.format("%-10s", version) + "                &#FFC427&l║"));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &7Premium Claim Shop Addon by SwaggerStudio        &#FFC427&l║"));
+                .parseColors(" &#FFC427&l║  &7Premium Claim Shop Addon by Kanhaiya             &#FFC427&l║"));
         Bukkit.getConsoleSender().sendMessage(
                 messageManager.parseColors(" &#FFC427&l╠═══════════════════════════════════════════════════╣"));
         Bukkit.getConsoleSender().sendMessage(messageManager
@@ -93,7 +93,7 @@ public class GriefPreventionShop extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(messageManager
                 .parseColors(" &#FFC427&l║  &fFolia: " + folia));
         Bukkit.getConsoleSender().sendMessage(messageManager
-                .parseColors(" &#FFC427&l║  &fWebsite: &e&nhttps://swaggers.studio/"));
+                .parseColors(" &#FFC427&l║  &fWebsite: &e&nhttps://kanhaiya.wtf/"));
         Bukkit.getConsoleSender().sendMessage(messageManager
                 .parseColors(" &#FFC427&l║  &fDiscord: &e&nhttps://discord.gg/Yxq6H8cb"));
         Bukkit.getConsoleSender().sendMessage(
@@ -113,8 +113,20 @@ public class GriefPreventionShop extends JavaPlugin {
             }
             if (!econ) {
                 String missingEcon = getCurrencyManager().getActiveCurrency();
-                Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
-                        " &#FFC427&l║  &e♯ &f" + missingEcon + ": &cNOT FOUND (Active Currency)"));
+                boolean vaultInstalled = Bukkit.getPluginManager().getPlugin("Vault") != null
+                        || Bukkit.getPluginManager().getPlugin("VaultUnlocked") != null;
+
+                if ((missingEcon.equalsIgnoreCase("Vault") || missingEcon.equalsIgnoreCase("VaultUnlocked")) && vaultInstalled) {
+                    Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                            " &#FFC427&l║  &e♯ &f" + missingEcon + ": &ePlugin is loaded, but has NO registered Economy Provider!"));
+                    Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                            " &#FFC427&l║  &e♯ &7Vault is only an API bridge. Install &aTheNewEconomy &7(Folia) or &aXConomy &7(Paper/Folia)"));
+                    Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                            " &#FFC427&l║  &e♯ &7Or set &factive-currency: \"auto\" &7or &f\"Experience\" &7in currencies.yml."));
+                } else {
+                    Bukkit.getConsoleSender().sendMessage(messageManager.parseColors(
+                            " &#FFC427&l║  &e♯ &f" + missingEcon + ": &cNOT FOUND (Active Currency)"));
+                }
             }
             return false;
         }
@@ -146,6 +158,11 @@ public class GriefPreventionShop extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&c✘ &fHook Status: &cFailed"));
             String reason = economyManager != null ? economyManager.getFailureReason() : "Economy provider could not be initialized.";
             Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&7Reason: " + reason));
+            boolean vaultInstalled = Bukkit.getPluginManager().getPlugin("Vault") != null
+                    || Bukkit.getPluginManager().getPlugin("VaultUnlocked") != null;
+            if ((activeEcon.equalsIgnoreCase("Vault") || activeEcon.equalsIgnoreCase("VaultUnlocked")) && vaultInstalled) {
+                Bukkit.getConsoleSender().sendMessage(messageManager.parseColors("&eTip: Run /vault-info to see economy status. Install &aTheNewEconomy &eor &aXConomy&e!"));
+            }
         }
     }
 

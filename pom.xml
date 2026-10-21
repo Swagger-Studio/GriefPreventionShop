@@ -6,7 +6,7 @@
 
     <groupId>com.swaggerstudio</groupId>
     <artifactId>GriefPreventionShop</artifactId>
-    <version>2.1</version>
+    <version>2.2</version>
     <packaging>jar</packaging>
 
     <name>GriefPreventionShop</name>
@@ -78,6 +78,10 @@
             <id>nightexpress-releases</id>
             <url>https://repo.nightexpressdev.com/releases</url>
         </repository>
+        <repository>
+            <id>codemc-creatorfromhell</id>
+            <url>https://repo.codemc.io/repository/creatorfromhell/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -103,6 +107,12 @@
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultUnlockedAPI</artifactId>
+            <version>2.20</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

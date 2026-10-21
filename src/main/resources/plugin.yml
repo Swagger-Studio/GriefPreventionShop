@@ -1,5 +1,5 @@
 name: GriefPreventionShop
-version: 2.1.1
+version: 2.1.2
 main: com.swaggerstudio.griefpreventionshop.GriefPreventionShop
 api-version: 1.18
 folia-supported: true
@@ -11,13 +11,19 @@ softdepend:
     GriefPrevention,
     GriefPrevention3D,
     Vault,
+    VaultUnlocked,
     PlayerPoints,
     ExcellentEconomy,
     CoinsEngine,
+    Essentials,
+    TheNewEconomy,
+    CMI,
+    XConomy,
+    Treasury,
   ]
-author: SwaggerStudio
+author: Kanhaiya
 description: Purchase claim blocks with a GUI economy shop. Supports GriefPrevention & GriefPrevention3D (Folia-ready).
-website: https://swaggers.studio/
+website: https://kanhaiya.wtf/
 
 commands:
   # We don't register the main command here because we do it dynamically

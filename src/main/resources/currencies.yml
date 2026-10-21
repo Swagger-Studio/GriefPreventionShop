@@ -3,11 +3,22 @@
 # ==========================================================
 
 # Active currency used in the shop.
-# Supported: Vault, PlayerPoints, ExcellentEconomy, Experience
+# Options:
+#   - "auto"          : Automatically detects any installed economy (Vault, VaultUnlocked, PlayerPoints, etc.)
+#                       and safely falls back to Experience (XP) if no third-party economy plugin is found.
+#   - "Vault"         : Standard Vault / VaultUnlocked economy (requires an economy plugin like TheNewEconomy, EssentialsX, XConomy)
+#   - "VaultUnlocked" : VaultUnlocked economy
+#   - "PlayerPoints"  : PlayerPoints plugin
+#   - "ExcellentEconomy" : ExcellentEconomy / CoinsEngine
+#   - "Experience"    : Vanilla Minecraft XP levels (No extra plugins required!)
 active-currency: "Vault"
 
 currencies:
   Vault:
+    register: true
+    raw: "&eMoney"
+
+  VaultUnlocked:
     register: true
     raw: "&eMoney"
 
